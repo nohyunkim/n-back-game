@@ -40,8 +40,8 @@
     .rankNumber {
     width: 35px;
     font-size: 18px;
-    font-weight: italic;
-    color: #E65A2D; /* 강조색 */
+    font-weight: bold;
+    color: #E65A2D;
     font-style: italic;
     }
 

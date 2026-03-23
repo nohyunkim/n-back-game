@@ -17,7 +17,7 @@
         fetchRanking();
     }, []);
 
-    // 순위별 메달 이모지 반환
+    // 순위별 메달 또는 숫자 표시
     const getRankBadge = (index) => {
         if (index === 0) return '🥇';
         if (index === 1) return '🥈';

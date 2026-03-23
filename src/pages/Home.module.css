@@ -1,0 +1,98 @@
+    /* src/pages/Home.module.css */
+
+    .container {
+    padding: 20px;
+    font-family: sans-serif;
+    background-color: #F8F9FA;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .card {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+    }
+
+    .title {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 5px 0;
+    }
+
+    .subtitle {
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+    margin: 0 0 30px 0;
+    }
+
+    .settingGroup {
+    margin-bottom: 25px;
+    }
+
+    .settingLabel {
+    display: block;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 10px;
+    }
+
+    .numberControl {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F1F3F5;
+    border-radius: 10px;
+    padding: 10px;
+    }
+
+    .circleButton {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: none;
+    background-color: #FFF;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .levelText {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4D6AFF;
+    }
+
+    .rangeInput {
+    width: 100%;
+    cursor: pointer;
+    }
+
+    .valueText {
+    float: right;
+    color: #4D6AFF;
+    font-weight: bold;
+    }
+
+    .startButton {
+    width: 100%;
+    padding: 18px;
+    background-color: #4D6AFF;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(77, 106, 255, 0.3);
+    margin-top: 10px;
+    }

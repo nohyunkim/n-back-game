@@ -1,0 +1,76 @@
+    .container {
+    padding: 40px 20px;
+    background-color: #1a1c23; /* 어두운 배경 */
+    min-height: 100vh;
+    color: #fff;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+
+    .title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #4D6AFF;
+    }
+
+    .rankingList {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    }
+
+    .rankingItem {
+    display: flex;
+    align-items: center;
+    background-color: #262a35;
+    padding: 15px 20px;
+    border-radius: 12px;
+    transition: transform 0.2s;
+    }
+
+    .rankingItem:hover {
+    transform: scale(1.02);
+    }
+
+    .rankNumber {
+    width: 35px;
+    font-size: 18px;
+    font-weight: italic;
+    color: #E65A2D; /* 강조색 */
+    font-style: italic;
+    }
+
+    .profileImage {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin: 0 15px;
+    border: 2px solid #333;
+    }
+
+    .nickname {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 500;
+    }
+
+    .score {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4D6AFF;
+    }
+
+    .backButton {
+    margin-top: 40px;
+    padding: 12px 30px;
+    background-color: transparent;
+    border: 1px solid #444;
+    color: #aaa;
+    border-radius: 10px;
+    cursor: pointer;
+    }

@@ -1,36 +1,59 @@
-/* src/pages/Home.module.css */
-.container {
-  min-height: 100vh;
-  background-color: #0f172a;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 20px;
-}
+  .container {
+    min-height: 100vh;
+    background-color: #0f172a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
 
-.authBar { position: absolute; top: 20px; right: 20px; }
-.loginBtn { padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; }
-.profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; }
-.profileBadge img { width: 28px; height: 28px; border-radius: 50%; }
+  .authBar { position: absolute; top: 20px; right: 20px; }
+  .loginBtn { padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; }
+  .profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; }
+  .profileBadge img { width: 28px; height: 28px; border-radius: 50%; }
 
-.content { display: flex; gap: 30px; max-width: 900px; width: 100%; flex-wrap: wrap; margin-top: 40px; }
-.card { flex: 1; min-width: 320px; background: #1e293b; padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); }
+  .content { display: flex; gap: 30px; max-width: 900px; width: 100%; flex-wrap: wrap; margin-top: 40px; }
+  .card { flex: 1; min-width: 320px; background: #1e293b; padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); }
 
-.title { font-size: 32px; font-weight: 800; background: linear-gradient(to right, #FF9A76, #FFC93C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-.subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 40px; }
+  .title { font-size: 32px; font-weight: 800; background: linear-gradient(to right, #FF9A76, #FFC93C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 40px; }
 
-.settings { display: flex; flex-direction: column; gap: 24px; margin-bottom: 40px; }
-.settingItem label { display: flex; justify-content: space-between; margin-bottom: 10px; color: #cbd5e1; }
-.settingItem span { color: #FFC93C; font-weight: bold; }
-.settingItem input { width: 100%; accent-color: #6366f1; }
+  .settings { display: flex; flex-direction: column; gap: 24px; margin-bottom: 40px; }
+  .settingItem label { display: flex; justify-content: space-between; margin-bottom: 10px; color: #cbd5e1; }
+  .settingItem span { color: #FFC93C; font-weight: bold; }
+  .settingItem input { width: 100%; accent-color: #6366f1; }
 
-.startBtn { width: 100%; padding: 18px; background: #6366f1; color: white; border-radius: 12px; font-size: 20px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; }
-.startBtn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
+  .startBtn { width: 100%; padding: 18px; background: #6366f1; color: white; border-radius: 12px; font-size: 20px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; }
+  .startBtn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
 
-.sideInfo { width: 300px; display: flex; flex-direction: column; gap: 20px; }
-.howTo, .miniRank { background: rgba(255,255,255,0.03); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-.howTo h3, .miniRank h3 { color: #FFC93C; margin-bottom: 15px; font-size: 16px; }
-.howTo p { font-size: 13px; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; }
+  .sideInfo { width: 300px; display: flex; flex-direction: column; gap: 20px; }
+  .howTo, .miniRank { background: rgba(255,255,255,0.03); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+  .howTo h3, .miniRank h3 { color: #FFC93C; margin-bottom: 15px; font-size: 16px; }
+  .howTo p { font-size: 13px; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; }
 
-.rankRow { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }
+  .rankScroll {
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+
+  .rankScroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .rankScroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+
+  .emptyText {
+    text-align: center;
+    color: #475569;
+    font-size: 13px;
+    padding: 20px 0;
+  }
+
+  .rankRow { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .rankRow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+  .rankRow b { color: #FFC93C; }
+  .moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }

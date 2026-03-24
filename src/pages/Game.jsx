@@ -1,4 +1,3 @@
-    // src/pages/Game.jsx
     import { useEffect, useState } from 'react';
     import { useNavigate, useLocation } from 'react-router-dom';
     import { useAuth } from '../contexts/AuthContext'; 
@@ -11,18 +10,17 @@
     const location = useLocation();
     const { currentUser, nickname } = useAuth(); 
 
-    // 난이도에 따른 심볼 갯수 연동 (예: nBack이 높을수록 심볼도 많아짐)
-    const nBack = location.state?.nBack || 2;
-    const totalSteps = location.state?.totalSteps || 30;
-    const symbolCount = nBack === 2 ? 4 : nBack === 3 ? 6 : 8; 
-    const blockDuration = 2000;
+    const { 
+        nBack = 2, 
+        totalSteps = 30, 
+        blockDuration = 2000 
+    } = location.state || {};
 
     const {
         gameState, currentStep, score, combo, currentBlock, stats, 
         startGame, handleInput
-    } = useNBackEngine({ nBack, totalSteps, blockDuration, symbolCount });
+    } = useNBackEngine({ nBack, totalSteps, blockDuration });
 
-    // 게임 종료 시 DB 저장 및 결과 화면 전환
     useEffect(() => {
         if (gameState === 'FINISHED' && currentUser) {
         const saveAndFinish = async () => {
@@ -33,19 +31,17 @@
         }
     }, [gameState, currentUser, nickname, score, nBack]);
 
-    // 스페이스바 이벤트 바인딩
     useEffect(() => {
         const handleKeyDown = (e) => {
         if (e.code === 'Space') {
             e.preventDefault(); 
-            handleInput();
+            if (!e.repeat) handleInput();
         }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [handleInput]);
 
-    // 타이머 바 애니메이션 제어용
     const [timerKey, setTimerKey] = useState(0);
     useEffect(() => {
         if (currentStep > 0) setTimerKey(prev => prev + 1);
@@ -93,12 +89,10 @@
                 <span className={styles.stepInfo}>{currentStep} / {totalSteps}</span>
             </div>
             <div className={styles.scoreInfo}>
-                <span className={styles.score}>{score} PTS</span>
-                {combo >= 3 && <span className={styles.comboBadge}>{combo} COMBO 🔥</span>}
+                <span className={styles.scoreText}>{score} PTS</span>
             </div>
             </div>
 
-            {/* 타이머 게이지 바 */}
             <div className={styles.timerTrack}>
             {gameState === 'PLAYING' && (
                 <div 
@@ -133,6 +127,8 @@
                 {isEarlyStep ? '기억하는 중...' : '일치 (Space)'}
             </button>
             )}
+
+            {combo >= 3 && <div className={styles.floatingCombo}>{combo} COMBO!</div>}
         </div>
         </div>
     );

@@ -1,3 +1,4 @@
+    // src/pages/Ranking.jsx
     import { useEffect, useState } from 'react';
     import { useNavigate } from 'react-router-dom';
     import { getDailyRanking } from '../services/rankingApi';
@@ -10,6 +11,7 @@
 
     useEffect(() => {
         const fetchRanking = async () => {
+        // API 단에서 이미 정렬 및 Top 10 처리가 완료된 데이터를 받습니다.
         const data = await getDailyRanking();
         setRanking(data);
         setLoading(false);
@@ -17,7 +19,6 @@
         fetchRanking();
     }, []);
 
-    // 순위별 메달 또는 숫자 표시
     const getRankBadge = (index) => {
         if (index === 0) return '🥇';
         if (index === 1) return '🥈';

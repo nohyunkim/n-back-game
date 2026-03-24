@@ -1,7 +1,9 @@
     /* src/pages/Game.module.css */
+
+    /* 전체 컨테이너 (다크 네이비 톤 유지) */
     .container {
     padding: 20px;
-    background-color: #0f172a;
+    background-color: #0f172a; /* 딥 네이비 배경 */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -15,15 +17,17 @@
     font-size: 14px;
     margin-bottom: 20px;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
     }
 
     .backLink:hover {
     color: #818cf8;
     }
 
-    .card {
-    background-color: #1e293b;
+    /* 메인 게임 및 결과 카드 (글래스모피즘 느낌 적용) */
+    .card, .resultCard {
+    background-color: rgba(30, 41, 59, 0.8); /* 약간 투명한 다크블루 */
+    backdrop-filter: blur(10px);
     border-radius: 24px;
     width: 100%;
     max-width: 400px;
@@ -31,57 +35,129 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
 
     .title {
     font-size: 22px;
     font-weight: 700;
-    margin: 0 0 4px 0;
-    }
-
-    .subtitle {
-    color: #94a3b8;
-    font-size: 13px;
     margin: 0 0 24px 0;
+    letter-spacing: 0.5px;
     }
 
-    .infoRow {
+    /* 상단 정보바 영역 (진행도 및 점수) */
+    .header {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    color: #cbd5e1;
-    font-size: 14px;
-    margin-bottom: 20px;
+    align-items: center;
+    margin-bottom: 16px;
     }
 
+    .levelBadge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin-right: 10px;
+    }
+
+    .stepInfo {
+    color: #94a3b8;
+    font-size: 15px;
+    font-weight: 600;
+    }
+
+    .scoreInfo {
+    display: flex;
+    align-items: center;
+    }
+
+    .score {
+    font-size: 22px;
+    font-weight: 800;
+    color: #f8fafc;
+    }
+
+    /* 콤보 달성 시 나타나는 오렌지/코랄 포인트 뱃지 */
+    .comboBadge {
+    background: linear-gradient(135deg, #FF4D4D, #FFC93C);
+    color: #111;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    margin-left: 10px;
+    animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    /* 타이머 진행 바 (입력 가능 시간 시각화) */
+    .timerTrack {
+    width: 100%;
+    height: 6px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    }
+
+    .timerThumb {
+    height: 100%;
+    /* 오렌지/코랄 그라데이션 타이머 */
+    background: linear-gradient(90deg, #FFC93C, #FF9A76);
+    width: 100%;
+    animation: shrink linear forwards;
+    }
+
+    /* 심볼이 표시되는 중앙 영역 */
     .shapeBoard {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 24px;
+    width: 220px;
+    height: 220px;
+    margin-bottom: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #334155;
+    background-color: #0f172a; /* 배경보다 한 톤 더 어둡게 눌러줌 */
     border-radius: 20px;
-    border: 2px solid rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.2);
+    position: relative;
     }
 
     .shapeWrapper {
-    animation: pulseFlash 0.3s ease-in-out;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     }
 
-    .scoreText {
-    font-size: 24px;
-    font-weight: 800;
-    color: #818cf8;
-    margin-bottom: 20px;
+    /* 초반 N스텝에 노출되는 안내 문구 */
+    .earlyWarning {
+    position: absolute;
+    top: -40px;
+    font-size: 14px;
+    color: #FFC93C;
+    font-weight: 700;
+    letter-spacing: 1px;
+    animation: pulse 1.5s infinite;
+    white-space: nowrap;
     }
 
+    .readyText {
+    color: #475569;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    }
+
+    /* 메인 액션 버튼 */
     .actionButton {
     width: 100%;
-    padding: 16px;
-    background-color: #6366f1;
+    padding: 18px;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
     color: #ffffff;
     font-size: 18px;
     font-weight: 700;
@@ -89,17 +165,111 @@
     border-radius: 14px;
     cursor: pointer;
     box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
     }
 
+    .actionButton:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px 0 rgba(99, 102, 241, 0.2);
+    }
+
+    /* 비활성화 버튼 (초반 입력 불가 상태) */
     .disabledButton {
-    background-color: #475569;
-    color: #94a3b8;
+    background: #334155;
+    color: #64748b;
     cursor: not-allowed;
     box-shadow: none;
     }
 
-    @keyframes pulseFlash {
-    0% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.05); filter: brightness(1.3); }
-    100% { transform: scale(1); filter: brightness(1); }
+    .disabledButton:active {
+    transform: none;
+    }
+
+    /* 결과 화면 전용 스타일 */
+    .scoreBoard {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    text-align: center;
+    }
+
+    .scoreBoard h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #cbd5e1;
+    }
+
+    .highlight {
+    color: #FFC93C;
+    font-size: 36px;
+    font-weight: 800;
+    display: block;
+    margin-top: 8px;
+    }
+
+    .scoreBoard p {
+    color: #e2e8f0;
+    margin: 10px 0;
+    font-size: 15px;
+    font-weight: 500;
+    }
+
+    .divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin: 20px 0;
+    }
+
+    .detailStats {
+    color: #94a3b8 !important;
+    font-size: 14px !important;
+    }
+
+    .btnGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    }
+
+    .secondaryButton {
+    width: 100%;
+    padding: 16px;
+    background-color: transparent;
+    color: #cbd5e1;
+    font-size: 16px;
+    font-weight: 700;
+    border: 1px solid #475569;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    }
+
+    .secondaryButton:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #f8fafc;
+    }
+
+    /* 애니메이션 모음 */
+    @keyframes shrink {
+    from { width: 100%; }
+    to { width: 0%; }
+    }
+
+    @keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+    }
+
+    .popAnim {
+    animation: pop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }

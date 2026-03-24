@@ -1,152 +1,136 @@
     // src/pages/Game.jsx
-    import { useState, useEffect, useRef, useCallback } from 'react';
+    import { useEffect, useState } from 'react';
     import { useNavigate, useLocation } from 'react-router-dom';
-    import { FaCircle, FaSquare, FaTimes, FaStar } from 'react-icons/fa'; 
     import { useAuth } from '../contexts/AuthContext'; 
     import { saveScore } from '../services/rankingApi'; 
+    import { useNBackEngine } from '../hooks/useNBackEngine';
     import styles from './Game.module.css'; 
-
-    const COLORS = ['#FF4D4D', '#FFC93C', '#6BCB77', '#4D96FF'];
-    const SHAPES = [FaCircle, FaSquare, FaTimes, FaStar];
 
     export default function Game() {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentUser, nickname } = useAuth(); 
 
-    // 이전 페이지에서 전달받은 커스텀 설정값
-    const { 
-        nBack = 2, 
-        totalSteps = 20, 
-        blockDuration = 2000 
-    } = location.state || {};
+    // 난이도에 따른 심볼 갯수 연동 (예: nBack이 높을수록 심볼도 많아짐)
+    const nBack = location.state?.nBack || 2;
+    const totalSteps = location.state?.totalSteps || 30;
+    const symbolCount = nBack === 2 ? 4 : nBack === 3 ? 6 : 8; 
+    const blockDuration = 2000;
 
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [currentBlock, setCurrentBlock] = useState(null);
-    const [history, setHistory] = useState([]); 
-    const [currentStep, setCurrentStep] = useState(0); 
-    const [score, setScore] = useState(0);
-    const [animateKey, setAnimateKey] = useState(0); 
+    const {
+        gameState, currentStep, score, combo, currentBlock, stats, 
+        startGame, handleInput
+    } = useNBackEngine({ nBack, totalSteps, blockDuration, symbolCount });
 
-    const timerRef = useRef(null); 
-
-    const startGame = () => {
-        if (!currentUser) {
-        alert('기록을 저장하려면 로그인이 필요합니다.');
-        navigate('/'); 
-        return;
-        }
-        setIsPlaying(true);
-        setHistory([]);
-        setScore(0);
-        setCurrentStep(1); 
-        nextBlock();
-    };
-
-    const nextBlock = () => {
-        const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-        const randomShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-        const newItem = { color: randomColor, shape: randomShape };
-        
-        setCurrentBlock(newItem);
-        setHistory((prev) => [...prev, newItem]);
-        setAnimateKey((prev) => prev + 1); 
-    };
-
-    const endGame = useCallback(async () => {
-        setIsPlaying(false);
-        clearInterval(timerRef.current);
-        
-        // 최종 데이터베이스 저장 로직
-        const userData = {
-        uid: currentUser.uid,
-        nickname: nickname,
-        photoURL: currentUser.photoURL
-        };
-        
-        await saveScore(userData, score, nBack);
-        alert(`게임 종료! 최종 점수: ${score}점`);
-        navigate('/ranking'); 
-    }, [score, nBack, currentUser, nickname, navigate]);
-
+    // 게임 종료 시 DB 저장 및 결과 화면 전환
     useEffect(() => {
-        if (isPlaying) {
-        timerRef.current = setInterval(() => {
-            if (currentStep < totalSteps) {
-            setCurrentStep((prev) => prev + 1);
-            nextBlock();
-            } else {
-            endGame();
-            }
-        }, blockDuration);
+        if (gameState === 'FINISHED' && currentUser) {
+        const saveAndFinish = async () => {
+            const userData = { uid: currentUser.uid, nickname, photoURL: currentUser.photoURL };
+            await saveScore(userData, score, nBack);
+        };
+        saveAndFinish();
         }
-        return () => clearInterval(timerRef.current);
-    }, [isPlaying, currentStep, totalSteps, blockDuration, endGame]);
+    }, [gameState, currentUser, nickname, score, nBack]);
 
-    const handleMatchClick = useCallback(() => {
-        if (!isPlaying || currentStep <= nBack) return; 
-
-        const targetBlock = history[history.length - 1 - nBack];
-        
-        // 모양과 색상이 동시에 일치하는지 비교
-        if (currentBlock.color === targetBlock.color && currentBlock.shape === targetBlock.shape) {
-        setScore((prev) => prev + 10); 
-        setAnimateKey((prev) => prev + 1); 
-        } else {
-        setScore((prev) => prev - 5);  
-        }
-    }, [isPlaying, currentStep, nBack, history, currentBlock]);
-
+    // 스페이스바 이벤트 바인딩
     useEffect(() => {
         const handleKeyDown = (e) => {
         if (e.code === 'Space') {
             e.preventDefault(); 
-            handleMatchClick();
+            handleInput();
         }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [handleMatchClick]);
+    }, [handleInput]);
+
+    // 타이머 바 애니메이션 제어용
+    const [timerKey, setTimerKey] = useState(0);
+    useEffect(() => {
+        if (currentStep > 0) setTimerKey(prev => prev + 1);
+    }, [currentStep]);
+
+    const isEarlyStep = currentStep <= nBack;
+
+    if (gameState === 'FINISHED') {
+        const avgRt = stats.correct > 0 ? Math.round(stats.totalReactionTime / stats.correct) : 0;
+        const accuracy = Math.round((stats.correct / (stats.correct + stats.wrong + stats.miss)) * 100) || 0;
+
+        return (
+        <div className={styles.container}>
+            <div className={styles.resultCard}>
+            <h1 className={styles.title}>훈련 완료</h1>
+            <div className={styles.scoreBoard}>
+                <h2>최종 점수: <span className={styles.highlight}>{score}</span> PTS</h2>
+                <p>최대 연속 정답: {stats.maxCombo} 콤보</p>
+                <p>평균 반응 속도: {avgRt} ms</p>
+                <p>정확도: {accuracy} %</p>
+                <hr className={styles.divider} />
+                <p className={styles.detailStats}>
+                정답: {stats.correct} | 오답: {stats.wrong} | 놓침: {stats.miss}
+                </p>
+            </div>
+            <div className={styles.btnGroup}>
+                <button onClick={startGame} className={styles.actionButton}>다시 하기</button>
+                <button onClick={() => navigate('/ranking')} className={styles.secondaryButton}>랭킹 보기</button>
+            </div>
+            </div>
+        </div>
+        );
+    }
 
     return (
         <div className={styles.container}>
         <div className={styles.backLink} onClick={() => navigate('/')}>
-            ← 처음 화면으로 돌아가기
+            ← 종료하고 나가기
         </div>
 
         <div className={styles.card}>
-            <h1 className={styles.title}>N-Back Training</h1>
-            <p className={styles.subtitle}>도형과 색상을 기억하세요</p>
-
-            <div className={styles.infoRow}>
-            <span>PROGRESS: {isPlaying ? `${currentStep}/${totalSteps}` : `0/${totalSteps}`}</span>
-            <span>LEVEL: {nBack}-Back</span>
+            <div className={styles.header}>
+            <div>
+                <span className={styles.levelBadge}>{nBack}-BACK</span>
+                <span className={styles.stepInfo}>{currentStep} / {totalSteps}</span>
+            </div>
+            <div className={styles.scoreInfo}>
+                <span className={styles.score}>{score} PTS</span>
+                {combo >= 3 && <span className={styles.comboBadge}>{combo} COMBO 🔥</span>}
+            </div>
             </div>
 
-            <div className={styles.shapeBoard}>
-            {currentBlock ? (
-                <div key={animateKey} className={styles.shapeWrapper}>
-                {/* 아이콘 크기를 100으로 살짝 키워 밸런스 조정 */}
-                <currentBlock.shape size="100" color={currentBlock.color} />
-                </div>
-            ) : (
-                <span style={{color: '#475569'}}>READY</span>
+            {/* 타이머 게이지 바 */}
+            <div className={styles.timerTrack}>
+            {gameState === 'PLAYING' && (
+                <div 
+                key={timerKey} 
+                className={styles.timerThumb} 
+                style={{ animationDuration: `${blockDuration}ms` }} 
+                />
             )}
             </div>
 
-            {isPlaying && <p className={styles.scoreText}>{score} PTS</p>}
+            <div className={styles.shapeBoard}>
+            {gameState === 'PLAYING' && currentBlock ? (
+                <div className={styles.shapeWrapper}>
+                {isEarlyStep && <div className={styles.earlyWarning}>눈으로만 기억하세요!</div>}
+                <currentBlock.shape size="100" color={currentBlock.color} className={styles.popAnim} />
+                </div>
+            ) : (
+                <span className={styles.readyText}>READY</span>
+            )}
+            </div>
 
-            {!isPlaying ? (
+            {gameState === 'IDLE' ? (
             <button onClick={startGame} className={styles.actionButton}>
                 훈련 시작하기
             </button>
             ) : (
             <button 
-                onClick={handleMatchClick} 
-                className={`${styles.actionButton} ${currentStep <= nBack ? styles.disabledButton : ''}`}
-                disabled={currentStep <= nBack}
+                onClick={handleInput} 
+                className={`${styles.actionButton} ${isEarlyStep ? styles.disabledButton : ''}`}
+                disabled={isEarlyStep}
             >
-                일치 (Space)
+                {isEarlyStep ? '기억하는 중...' : '일치 (Space)'}
             </button>
             )}
         </div>

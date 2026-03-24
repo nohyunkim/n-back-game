@@ -12,8 +12,11 @@
   .profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; }
   .profileBadge img { width: 28px; height: 28px; border-radius: 50%; }
 
-  .content { display: flex; gap: 30px; max-width: 900px; width: 100%; flex-wrap: wrap; margin-top: 40px; }
-  .card { flex: 1; min-width: 320px; background: #1e293b; padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); }
+  /* align-items를 stretch로 변경하여 좌우 카드의 높이가 동일하게 맞도록 조정 */
+  .content { display: flex; gap: 30px; max-width: 900px; width: 100%; flex-wrap: wrap; margin-top: 40px; align-items: stretch; }
+
+  /* 내부 요소들이 양끝에 잘 분배되도록 flex 구성 */
+  .card { flex: 1; min-width: 320px; background: #1e293b; padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: space-between; }
 
   .title { font-size: 32px; font-weight: 800; background: linear-gradient(to right, #FF9A76, #FFC93C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
   .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 40px; }
@@ -26,15 +29,25 @@
   .startBtn { width: 100%; padding: 18px; background: #6366f1; color: white; border-radius: 12px; font-size: 20px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; }
   .startBtn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
 
-  .sideInfo { width: 300px; display: flex; flex-direction: column; gap: 20px; }
-  .howTo, .miniRank { background: rgba(255,255,255,0.03); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-  .howTo h3, .miniRank h3 { color: #FFC93C; margin-bottom: 15px; font-size: 16px; }
-  .howTo p { font-size: 13px; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; }
+  /* 넓이를 살짝 넓히고 공간 분배 적용 */
+  .sideInfo { width: 320px; display: flex; flex-direction: column; gap: 20px; justify-content: space-between; }
 
+  .howTo { background: rgba(255,255,255,0.03); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+
+  /* 높이를 꽉 채우기 위해 flex-grow 적용 */
+  .miniRank { background: rgba(255,255,255,0.03); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); flex-grow: 1; display: flex; flex-direction: column; }
+
+  .howTo h3, .miniRank h3 { color: #FFC93C; margin-bottom: 15px; font-size: 16px; }
+
+  /* 글자가 어색하게 떨어지지 않게 word-break: keep-all 추가 */
+  .howTo p { font-size: 13px; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; word-break: keep-all; }
+
+  /* 스크롤 영역이 남은 공간을 채우도록 지정 */
   .rankScroll {
     max-height: 280px;
     overflow-y: auto;
     padding-right: 8px;
+    flex-grow: 1;
   }
 
   .rankScroll::-webkit-scrollbar {

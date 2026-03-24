@@ -12,7 +12,7 @@
     const [topRanking, setTopRanking] = useState([]);
 
     const [nBack, setNBack] = useState(2);
-    const [totalSteps, setTotalSteps] = useState(30);
+    const [totalSteps, setTotalSteps] = useState(20); // 초기값을 20으로 변경
     const [speed, setSpeed] = useState(2.0);
 
     useEffect(() => {
@@ -49,7 +49,8 @@
                 </div>
                 <div className={styles.settingItem}>
                 <label>문제 수: <span>{totalSteps}개</span></label>
-                <input type="range" min="10" max="100" step="10" value={totalSteps} onChange={(e) => setTotalSteps(Number(e.target.value))} />
+                {/* max 범위를 50으로 수정 */}
+                <input type="range" min="10" max="50" step="10" value={totalSteps} onChange={(e) => setTotalSteps(Number(e.target.value))} />
                 </div>
                 <div className={styles.settingItem}>
                 <label>노출 속도: <span>{speed}초</span></label>

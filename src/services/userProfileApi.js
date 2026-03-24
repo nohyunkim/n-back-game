@@ -1,38 +1,39 @@
-    // src/services/userProfileApi.js
     import { db } from "./firebase";
-    import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+    import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 
-    /**
-     * 유저 프로필 정보를 Firestore에 저장하거나 업데이트합니다.
-     * 처음 로그인 시 구글 정보를 기본으로 저장합니다.
-     */
     export const syncUserProfile = async (user) => {
     if (!user) return;
 
-    const userRef = doc(db, "users", user.uid); // 유저 UID를 문서 ID로 사용
+    const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-        // 1. 처음 로그인한 유저라면 구글 정보를 기본으로 프로필 생성
-        // 참고 사진의 "처음에는 그대로 받되" 기능 구현
+        let initialNickname = user.displayName;
+        
+        // 가입 시 구글 이름이 이미 다른 유저의 닉네임과 겹치는지 검사
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("nickname", "==", initialNickname));
+        const snapshot = await getDocs(q);
+        
+        // 중복된다면 뒤에 임의의 숫자를 붙임
+        if (!snapshot.empty) {
+        initialNickname = `${initialNickname}_${Math.floor(Math.random() * 10000)}`;
+        }
+
         await setDoc(userRef, {
         uid: user.uid,
-        displayName: user.displayName, // 구글 이름
-        photoURL: user.photoURL,     // 구글 프로필 사진
-        nickname: user.displayName,   // 초기 별명은 구글 이름과 동일
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        nickname: initialNickname,
         email: user.email,
         createdAt: new Date(),
         });
         console.log("새 프로필 생성 완료:", user.displayName);
     } else {
-        // 2. 이미 존재하는 유저라면 로그인 시간 등만 업데이트 (선택 사항)
         console.log("기존 유저 로그인:", userSnap.data().nickname);
     }
     };
 
-    /**
-     * 유저의 별명을 Firestore에서 가져옵니다.
-     */
     export const getUserNickname = async (uid) => {
     const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
@@ -42,13 +43,22 @@
     return null;
     };
 
-    /**
-     * 유저의 별명을 업데이트합니다.
-     * 참고 사진 7번의 "변경하기" 기능 구현
-     */
     export const updateUserNickname = async (uid, newNickname) => {
     if (!newNickname || newNickname.length < 2 || newNickname.length > 12) {
         throw new Error("별명은 2~12자 사이여야 합니다.");
+    }
+
+    // 닉네임 변경 시 중복 검사
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("nickname", "==", newNickname));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+        // 겹치는 닉네임이 있는데, 그게 자기 자신이면 변경 진행(통과)
+        const isMine = querySnapshot.docs.some(doc => doc.id === uid);
+        if (!isMine) {
+        throw new Error("이미 다른 유저가 사용 중인 별명입니다.");
+        }
     }
 
     const userRef = doc(db, "users", uid);

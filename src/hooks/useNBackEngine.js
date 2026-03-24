@@ -4,6 +4,7 @@
     const ALL_SHAPES = [FaCircle, FaSquare, FaTimes, FaStar, FaHeart, FaPlay, FaGem, FaMoon];
     const ALL_COLORS = ['#FF4D4D', '#FFC93C', '#6BCB77', '#4D96FF', '#A020F0', '#FF9A76', '#00E0FF', '#F9F871'];
 
+    // 정답 시퀀스를 미리 생성하는 함수
     const generateSequence = (totalSteps, nBack, symbolCount) => {
     const sequence = [];
     const targetMatchCount = Math.floor((totalSteps - nBack) * 0.3);
@@ -60,32 +61,23 @@
 
     const engineRef = useRef({ sequence: [], matchIndices: new Set(), stepStartTime: 0, hasAnsweredThisStep: false });
     const timerRef = useRef(null);
+    const stepRef = useRef(0); // 현재 진행 상황을 안전하게 추적하기 위한 ref 추가
 
     const calculateBaseScore = useCallback(() => {
         const speedMultiplier = (4000 / blockDuration); 
         return Math.round(10 * nBack * speedMultiplier);
     }, [nBack, blockDuration]);
 
-    const startGame = useCallback(() => {
-        const { sequence, matchIndices } = generateSequence(totalSteps, nBack, symbolCount);
-        engineRef.current.sequence = sequence;
-        engineRef.current.matchIndices = matchIndices;
-        engineRef.current.hasAnsweredThisStep = false;
-        setScore(0);
-        setCombo(0);
-        setStats({ correct: 0, wrong: 0, miss: 0, totalReactionTime: 0, maxCombo: 0 });
-        setCurrentStep(0);
-        setGameState('PLAYING');
-        nextStep(0);
-    }, [totalSteps, nBack, symbolCount]);
-
+    // 다음 스텝으로 넘어가는 로직
     const nextStep = useCallback((stepIdx) => {
+        // 모든 문제를 다 풀었다면 FINISHED 상태로 변경
         if (stepIdx >= totalSteps) {
         setGameState('FINISHED');
         if (timerRef.current) clearInterval(timerRef.current);
         return;
         }
 
+        // 아무 키도 누르지 않고 지나갔는데 그게 정답이었을 경우(놓침) 페널티
         if (stepIdx > 0 && engineRef.current.matchIndices.has(stepIdx - 1) && !engineRef.current.hasAnsweredThisStep) {
         setScore(s => s - Math.round(calculateBaseScore() / 2));
         setCombo(0);
@@ -95,16 +87,32 @@
         engineRef.current.hasAnsweredThisStep = false;
         engineRef.current.stepStartTime = Date.now();
         setCurrentBlock(engineRef.current.sequence[stepIdx]);
+        
+        // ref와 state 모두 다음 스텝으로 업데이트
+        stepRef.current = stepIdx + 1; 
         setCurrentStep(stepIdx + 1);
     }, [totalSteps, calculateBaseScore]);
+
+    const startGame = useCallback(() => {
+        const { sequence, matchIndices } = generateSequence(totalSteps, nBack, symbolCount);
+        engineRef.current.sequence = sequence;
+        engineRef.current.matchIndices = matchIndices;
+        engineRef.current.hasAnsweredThisStep = false;
+        setScore(0);
+        setCombo(0);
+        setStats({ correct: 0, wrong: 0, miss: 0, totalReactionTime: 0, maxCombo: 0 });
+        
+        stepRef.current = 0; // 시작 시 스텝 번호 초기화
+        setCurrentStep(0);
+        setGameState('PLAYING');
+        nextStep(0); // 게임 시작과 동시에 첫 스텝 호출
+    }, [totalSteps, nBack, symbolCount, nextStep]);
 
     useEffect(() => {
         if (gameState === 'PLAYING') {
         timerRef.current = setInterval(() => {
-            setCurrentStep((prev) => {
-            nextStep(prev);
-            return prev; 
-            });
+            // prev 상태를 받아오는 대신 ref의 최신 값을 직접 참조하여 무한 루프 버그 해결
+            nextStep(stepRef.current);
         }, blockDuration);
         }
         return () => clearInterval(timerRef.current);

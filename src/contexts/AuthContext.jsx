@@ -1,66 +1,58 @@
-    // src/contexts/AuthContext.jsx
-    import { createContext, useContext, useState, useEffect } from "react";
-    import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-    import { auth, googleProvider } from "../services/firebase";
-    import { syncUserProfile, getUserNickname } from "../services/userProfileApi";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
+import { AuthContext } from "./auth-context";
+import { auth, googleProvider } from "../services/firebase";
+import { getUserNickname, syncUserProfile } from "../services/userProfileApi";
 
-    // 1. Context 생성
-    const AuthContext = createContext();
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [nickname, setNickname] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // 2. Provider 컴포넌트 생성
-    export function AuthProvider({ children }) {
-    const [currentUser, setCurrentUser] = useState(null); 
-    const [nickname, setNickname] = useState(null);     
-    const [loading, setLoading] = useState(true);        
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      await syncUserProfile(result.user);
+      const nextNickname = await getUserNickname(result.user.uid);
+      setNickname(nextNickname);
+    } catch (error) {
+      console.error("Failed to sign in with Google.", error);
+    }
+  };
 
-    // 함수: 구글 로그인
-    const loginWithGoogle = async () => {
-        try {
-        const result = await signInWithPopup(auth, googleProvider);
-        await syncUserProfile(result.user);
-        const name = await getUserNickname(result.user.uid);
-        setNickname(name);
-        } catch (error) {
-        console.error("로그인 실패:", error);
-        }
-    };
+  const logout = async () => {
+    setNickname(null);
+    return signOut(auth);
+  };
 
-    // 함수: 로그아웃
-    const logout = () => {
-        return signOut(auth);
-    };
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        setCurrentUser(user);
-        if (user) {
-            const name = await getUserNickname(user.uid);
-            setNickname(name);
-        } else {
-            setNickname(null);
-        }
-        setLoading(false); 
-        });
+      if (user) {
+        const nextNickname = await getUserNickname(user.uid);
+        setNickname(nextNickname);
+      } else {
+        setNickname(null);
+      }
 
-        return unsubscribe;
-    }, []);
+      setLoading(false);
+    });
 
-    const value = {
+    return unsubscribe;
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
         currentUser,
         nickname,
-        setNickname, 
+        setNickname,
         loginWithGoogle,
         logout,
-    };
-
-    return (
-        <AuthContext.Provider value={value}>
-        {!loading && children}
-        </AuthContext.Provider>
-    );
-    }
-
-    // 3. 커스텀 훅
-    export function useAuth() {
-    return useContext(AuthContext);
-    }
+      }}
+    >
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}

@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidDateString(value) {
+      return value is string && value.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if isOwner(userId) && request.resource.data.uid == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /scores/{scoreId} {
+      allow read: if true;
+
+      allow create: if
+        isOwner(request.resource.data.uid) &&
+        scoreId == request.auth.uid + "_" + request.resource.data.dateString &&
+        isValidDateString(request.resource.data.dateString) &&
+        request.resource.data.score is int &&
+        request.resource.data.nBack is int;
+
+      allow update: if
+        isOwner(resource.data.uid) &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.dateString == resource.data.dateString &&
+        scoreId == request.auth.uid + "_" + resource.data.dateString &&
+        isValidDateString(request.resource.data.dateString) &&
+        request.resource.data.score is int &&
+        request.resource.data.nBack is int &&
+        request.resource.data.score >= resource.data.score;
+
+      allow delete: if false;
+    }
+  }
+}

@@ -1,6 +1,6 @@
     // src/components/common/ProfileModal.jsx
     import { useState } from 'react';
-    import { useAuth } from '../../contexts/AuthContext';
+    import { useAuth } from '../../contexts/useAuth';
     import { updateUserNickname } from '../../services/userProfileApi';
     import styles from './ProfileModal.module.css';
 

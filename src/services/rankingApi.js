@@ -28,10 +28,9 @@
         
         // 유저의 오늘 기록이 이미 존재하는지 검사
         const q = query(
-            scoresRef,
-            where("dateString", "==", todayString),
-            orderBy("score", "desc"), 
-            limit(10) 
+        scoresRef,
+        where("uid", "==", userData.uid),
+        where("dateString", "==", todayString)
         );
         
         const snapshot = await getDocs(q);

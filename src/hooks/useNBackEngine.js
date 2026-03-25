@@ -128,7 +128,7 @@
         if (isMatch) {
         setCombo(c => {
             const newCombo = c + 1;
-            const bonus = newCombo >= 5 ? basePoints * 0.5 : (newCombo >= 3 ? basePoints * 0.2 : 0);
+            const bonus = newCombo >= 5 ? basePoints * 0.25 : (newCombo >= 3 ? basePoints * 0.1 : 0);
             setScore(s => s + basePoints + Math.round(bonus));
             setStats(s => ({ ...s, correct: s.correct + 1, totalReactionTime: s.totalReactionTime + (Date.now() - engineRef.current.stepStartTime), maxCombo: Math.max(s.maxCombo, newCombo) }));
             return newCombo;

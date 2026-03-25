@@ -24,7 +24,11 @@
     useEffect(() => {
         if (gameState === 'FINISHED' && currentUser) {
         const saveAndFinish = async () => {
-            const userData = { uid: currentUser.uid, nickname, photoURL: currentUser.photoURL };
+            const userData = { 
+                uid: currentUser.uid, 
+                nickname: nickname || "익명", 
+                photoURL: currentUser.photoURL || null 
+            };
             await saveScore(userData, score, nBack);
         };
         saveAndFinish();

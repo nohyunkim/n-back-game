@@ -16,7 +16,7 @@
     const [speed, setSpeed] = useState(2.0);
 
     useEffect(() => {
-        getDailyRanking().then(data => setTopRanking(data.slice(0, 10)));
+        getDailyRanking().then(data => setTopRanking(data.slice(0, 3)));
     }, []);
 
     const handleStart = () => {
@@ -64,14 +64,14 @@
             <div className={styles.sideInfo}>
             <section className={styles.howTo}>
                 <h3>How to Play</h3>
-                <p>1. 화면에 나타나는 심볼을 순서대로 기억하세요.</p>
-                <p>2. 현재 심볼이 <strong>{nBack}개 전</strong>의 것과 같으면 <strong>Space</strong>를 누르세요.</p>
-                <p>3. 난이도가 높고 속도가 빠를수록 더 높은 점수를 얻습니다!</p>
+                <p><strong>지금 도형</strong>이 <strong>{nBack}개 전</strong> 도형과 같을 때만 <strong>Space 또는 버튼</strong>를 누르세요.</p>
+                <p><strong>처음 {nBack}개</strong>는 비교할 수 없으니 누르지 말고 기억만 하면 됩니다.</p>
+                <p><strong>다르면 누르지 않기.</strong> 이 한 가지만 기억하면 바로 시작할 수 있어요.</p>
             </section>
 
             <section className={styles.miniRank}>
-                <h3>Today's Top 10</h3>
-                <div className={styles.rankScroll}>
+                <h3>Today's Top 3</h3>
+                <div className={styles.rankList}>
                 {topRanking.length > 0 ? topRanking.map((r, i) => (
                     <div key={r.id} className={styles.rankRow}>
                     <span>{i + 1}. {r.nickname}</span>

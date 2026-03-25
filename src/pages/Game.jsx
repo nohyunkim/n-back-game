@@ -7,7 +7,7 @@
     import { saveScore } from "../services/rankingApi";
     import styles from "./Game.module.css";
 
-    export default function Game() {
+export default function Game() {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentUser, nickname } = useAuth();
@@ -19,9 +19,10 @@
             totalSteps: 20,
             blockDuration: 2000,
         };
-    const savedScoreRef = useRef(false);
+  const savedScoreRef = useRef(false);
 
-    useEffect(() => {
+  // 잘못된 진입은 홈으로 돌려보낸다.
+  useEffect(() => {
         if (!hasValidEntry) {
         navigate("/", { replace: true });
         }
@@ -37,12 +38,13 @@
         }
     }, [gameState]);
 
-    useEffect(() => {
-        if (gameState !== "FINISHED" || !currentUser || savedScoreRef.current) {
-        return;
-        }
+  useEffect(() => {
+    if (gameState !== "FINISHED" || !currentUser || savedScoreRef.current) {
+      return;
+    }
 
-        savedScoreRef.current = true;
+    // 게임 종료 시 점수는 한 번만 저장한다.
+    savedScoreRef.current = true;
 
         void saveScore(
         {
@@ -55,8 +57,9 @@
         );
     }, [currentUser, gameState, nBack, nickname, score]);
 
-    useEffect(() => {
-        const handleKeyDown = (event) => {
+  useEffect(() => {
+    // Space 입력을 버튼 클릭과 같은 행동으로 연결한다.
+    const handleKeyDown = (event) => {
         if (event.code !== "Space") {
             return;
         }
@@ -71,12 +74,13 @@
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [handleInput]);
 
-    useEffect(() => {
-        if (gameState !== "PLAYING") {
-        return undefined;
-        }
+  useEffect(() => {
+    if (gameState !== "PLAYING") {
+      return undefined;
+    }
 
-        const handleBeforeUnload = (event) => {
+    // 진행 중 새로고침 이탈에만 경고를 건다.
+    const handleBeforeUnload = (event) => {
         event.preventDefault();
         event.returnValue = "";
         };

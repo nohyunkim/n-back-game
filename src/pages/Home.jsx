@@ -7,7 +7,7 @@
     import { isInAppBrowser } from "../utils/browser";
     import styles from "./Home.module.css";
 
-    export default function Home() {
+export default function Home() {
     const navigate = useNavigate();
     const { currentUser, nickname, loginWithGoogle } = useAuth();
     const inAppBrowser = isInAppBrowser();
@@ -16,16 +16,18 @@
     const [topRanking, setTopRanking] = useState([]);
     const [showInAppNotice, setShowInAppNotice] = useState(inAppBrowser);
 
-    const [nBack, setNBack] = useState(DEFAULT_GAME_CONFIG.nBack);
-    const [totalSteps, setTotalSteps] = useState(DEFAULT_GAME_CONFIG.totalSteps);
-    const [speed, setSpeed] = useState(DEFAULT_GAME_CONFIG.speed);
+  const [nBack, setNBack] = useState(DEFAULT_GAME_CONFIG.nBack);
+  const [totalSteps, setTotalSteps] = useState(DEFAULT_GAME_CONFIG.totalSteps);
+  const [speed, setSpeed] = useState(DEFAULT_GAME_CONFIG.speed);
 
-    useEffect(() => {
-        getDailyRanking().then((data) => setTopRanking(data.slice(0, 3)));
-    }, []);
+  // 홈에서는 랭킹 상위 3개만 미리 보여준다.
+  useEffect(() => {
+    getDailyRanking().then((data) => setTopRanking(data.slice(0, 3)));
+  }, []);
 
-    const handleLogin = () => {
-        if (inAppBrowser) {
+  const handleLogin = () => {
+    // 인앱 브라우저에서는 로그인 시도 대신 안내만 보여준다.
+    if (inAppBrowser) {
         setShowInAppNotice(true);
         alert("카카오톡 같은 인앱 브라우저에서는 Google 로그인이 차단될 수 있어요. 기본 브라우저에서 다시 열어주세요.");
         return;
@@ -34,8 +36,9 @@
         void loginWithGoogle();
     };
 
-    const handleStart = () => {
-        if (!currentUser) {
+  const handleStart = () => {
+    // 선택한 옵션을 라우터 state로 넘겨 게임을 시작한다.
+    if (!currentUser) {
         alert("게임을 시작하려면 로그인이 필요합니다.");
         return;
         }

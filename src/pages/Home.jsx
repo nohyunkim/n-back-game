@@ -4,14 +4,17 @@ import ProfileModal from "../components/common/ProfileModal";
 import { DEFAULT_GAME_CONFIG, GAME_LIMITS, createGameConfig } from "../constants/gameConfig";
 import { useAuth } from "../contexts/useAuth";
 import { getDailyRanking } from "../services/rankingApi";
+import { isInAppBrowser } from "../utils/browser";
 import styles from "./Home.module.css";
 
 export default function Home() {
   const navigate = useNavigate();
   const { currentUser, nickname, loginWithGoogle } = useAuth();
+  const inAppBrowser = isInAppBrowser();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isHowToFlipped, setIsHowToFlipped] = useState(false);
   const [topRanking, setTopRanking] = useState([]);
+  const [showInAppNotice, setShowInAppNotice] = useState(inAppBrowser);
 
   const [nBack, setNBack] = useState(DEFAULT_GAME_CONFIG.nBack);
   const [totalSteps, setTotalSteps] = useState(DEFAULT_GAME_CONFIG.totalSteps);
@@ -20,6 +23,16 @@ export default function Home() {
   useEffect(() => {
     getDailyRanking().then((data) => setTopRanking(data.slice(0, 3)));
   }, []);
+
+  const handleLogin = () => {
+    if (inAppBrowser) {
+      setShowInAppNotice(true);
+      alert("카카오톡 같은 인앱 브라우저에서는 Google 로그인이 차단될 수 있어요. 기본 브라우저에서 다시 열어주세요.");
+      return;
+    }
+
+    void loginWithGoogle();
+  };
 
   const handleStart = () => {
     if (!currentUser) {
@@ -34,9 +47,21 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      {showInAppNotice && !currentUser && (
+        <div className={styles.inAppNotice}>
+          <div>
+            <strong>인앱 브라우저에서는 Google 로그인이 막힐 수 있어요.</strong>
+            <p>카카오톡에서 열었다면 메뉴에서 기본 브라우저로 열어주세요.</p>
+          </div>
+          <button type="button" className={styles.noticeClose} onClick={() => setShowInAppNotice(false)}>
+            닫기
+          </button>
+        </div>
+      )}
+
       <div className={styles.authBar}>
         {!currentUser ? (
-          <button onClick={loginWithGoogle} className={styles.loginBtn}>
+          <button onClick={handleLogin} className={styles.loginBtn}>
             Google 로그인
           </button>
         ) : (
@@ -108,7 +133,7 @@ export default function Home() {
                 <div className={styles.howToContent}>
                   <h3>게임 방법</h3>
                   <p>
-                    지금 보이는 도형이 <strong>{nBack}턴 전</strong> 도형과 같으면 <strong>Space</strong>를 누르세요.
+                    지금 보이는 도형이 <strong>{nBack}칸 전</strong> 도형과 같으면 <strong>Space</strong>를 누르세요.
                   </p>
                   <p>
                     처음 <strong>{nBack}턴</strong>은 비교 대상이 없으니 순서를 기억하는 데 집중하면 됩니다.
@@ -124,9 +149,7 @@ export default function Home() {
                 <div className={styles.howToContent}>
                   <h3>{nBack}-Back 예시</h3>
                   <p className={styles.exampleLine}>예시 순서: ● → ▲ → ● → ■</p>
-                  <p>
-                    2-Back 기준에서는 3번째 ●가 2칸 전의 ●와 같으므로 그 순간 누르면 됩니다.
-                  </p>
+                  <p>2-Back 기준에서는 3번째 ●가 2칸 전의 ●와 같으므로 그 순간 누르면 됩니다.</p>
                   <p>지금 선택한 {nBack}-Back은 항상 {nBack}칸 전 도형과 비교한다고 생각하면 돼요.</p>
                 </div>
                 <button type="button" className={styles.flipButton} onClick={() => setIsHowToFlipped(false)}>

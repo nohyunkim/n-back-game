@@ -7,6 +7,42 @@
     padding: 40px 20px;
   }
 
+  .inAppNotice {
+    width: min(900px, 100%);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: rgba(255, 201, 60, 0.12);
+    border: 1px solid rgba(255, 201, 60, 0.28);
+    color: #f8fafc;
+  }
+
+  .inAppNotice strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #fcd34d;
+  }
+
+  .inAppNotice p {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .noticeClose {
+    border: none;
+    background: transparent;
+    color: #fcd34d;
+    cursor: pointer;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
   .authBar { position: absolute; top: 20px; right: 20px; }
   .loginBtn { padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; }
   .profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; }
@@ -65,3 +101,14 @@
   .rankRow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; color: white; }
   .rankRow b { color: #FFC93C; }
   .moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }
+
+  @media (max-width: 640px) {
+    .inAppNotice {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .noticeClose {
+      align-self: flex-end;
+    }
+  }

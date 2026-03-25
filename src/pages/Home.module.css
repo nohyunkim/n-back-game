@@ -44,7 +44,45 @@
   }
 
   .authBar { position: absolute; top: 20px; right: 20px; }
-  .loginBtn { padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; }
+  .loginBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 40px;
+    padding: 0 14px 0 11px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .loginBtn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  .googleIcon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    background: conic-gradient(from -45deg, #4285f4 0 25%, #34a853 25% 50%, #fbbc05 50% 75%, #ea4335 75% 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .loginText {
+    font-size: 13px;
+    letter-spacing: -0.01em;
+  }
   .profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; }
   .profileBadge img { width: 28px; height: 28px; border-radius: 50%; }
 
@@ -128,8 +166,8 @@
 
     .loginBtn {
       min-height: 40px;
-      padding: 10px 14px;
-      font-size: 14px;
+      padding: 0 12px 0 10px;
+      gap: 10px;
     }
 
     .profileBadge {

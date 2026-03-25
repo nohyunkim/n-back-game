@@ -72,10 +72,24 @@ export const getDailyRanking = async () => {
     const rankingQuery = query(scoresRef, where("dateString", "==", todayString), orderBy("score", "desc"));
     const querySnapshot = await getDocs(rankingQuery);
 
-    return querySnapshot.docs.slice(0, 10).map((scoreDoc) => ({
+    const rankingList = querySnapshot.docs.map((scoreDoc) => ({
       id: scoreDoc.id,
       ...scoreDoc.data(),
     }));
+
+    const uniqueRankingList = [];
+    const seenUsers = new Set();
+
+    for (const item of rankingList) {
+      if (seenUsers.has(item.uid)) {
+        continue;
+      }
+
+      seenUsers.add(item.uid);
+      uniqueRankingList.push(item);
+    }
+
+    return uniqueRankingList.slice(0, 10);
   } catch (error) {
     console.error("Failed to fetch ranking.", error);
     return [];

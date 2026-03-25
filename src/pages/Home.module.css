@@ -67,6 +67,6 @@
   }
 
   .rankRow { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-  .rankRow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+  .rankRow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; color: white; }
   .rankRow b { color: #FFC93C; }
   .moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }

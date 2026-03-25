@@ -5,10 +5,11 @@
     import ProfileModal from '../components/common/ProfileModal';
     import styles from './Home.module.css';
 
-    export default function Home() {
+export default function Home() {
     const navigate = useNavigate();
     const { currentUser, nickname, loginWithGoogle } = useAuth();
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isHowToFlipped, setIsHowToFlipped] = useState(false);
     const [topRanking, setTopRanking] = useState([]);
 
     const [nBack, setNBack] = useState(2);
@@ -63,10 +64,43 @@
 
             <div className={styles.sideInfo}>
             <section className={styles.howTo}>
-                <h3>How to Play</h3>
-                <p><strong>지금 도형</strong>이 <strong>{nBack}개 전</strong> 도형과 같을 때만 <strong>Space 또는 버튼</strong>를 누르세요.</p>
-                <p><strong>처음 {nBack}개</strong>는 비교할 수 없으니 누르지 말고 기억만 하면 됩니다.</p>
-                <p><strong>다르면 누르지 않기.</strong> 이 한 가지만 기억하면 바로 시작할 수 있어요.</p>
+                <div className={`${styles.howToInner} ${isHowToFlipped ? styles.howToFlipped : ''}`}>
+                <div className={`${styles.howToFace} ${styles.howToFront}`}>
+                    <div className={styles.howToContent}>
+                    <h3>How to Play</h3>
+                    <p><strong>지금 도형</strong>이 <strong>{nBack}개 전</strong> 도형과 같을 때만 <strong>Space 또는 버튼</strong>을 누르세요.</p>
+                    <p><strong>처음 {nBack}개</strong>는 비교할 수 없으니 누르지 말고 기억만 하면 됩니다.</p>
+                    <p><strong>다르면 누르지 않기.</strong> 이 한 가지만 기억하면 바로 시작할 수 있어요.</p>
+                    </div>
+                    <button
+                        type="button"
+                        className={styles.flipButton}
+                        onClick={() => setIsHowToFlipped(true)}
+                    >
+                        예시 보기
+                    </button>
+                </div>
+
+                <div className={`${styles.howToFace} ${styles.howToBack}`}>
+                    <div className={styles.howToContent}>
+                    <h3>{nBack}-Back Example</h3>
+                    <p className={styles.exampleLine}>예시 순서: ● → ▲ → ● → ■</p>
+                    <p>
+                        <strong>2-Back 기준</strong>에서는 3번째 ●가 2칸 전의 ●와 같으므로 그 순간 누르면 됩니다.
+                    </p>
+                    <p>
+                        지금 선택한 <strong>{nBack}-Back</strong>은 항상 <strong>{nBack}칸 전</strong> 도형과 비교한다고 생각하면 돼요.
+                    </p>
+                    </div>
+                    <button
+                        type="button"
+                        className={styles.flipButton}
+                        onClick={() => setIsHowToFlipped(false)}
+                    >
+                        규칙 다시 보기
+                    </button>
+                </div>
+                </div>
             </section>
 
             <section className={styles.miniRank}>

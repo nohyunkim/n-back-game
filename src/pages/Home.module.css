@@ -32,16 +32,24 @@
   /* 넓이를 살짝 넓히고 공간 분배 적용 */
   .sideInfo { width: 320px; display: flex; flex-direction: column; gap: 20px; justify-content: space-between; }
 
-  .howTo { background: rgba(255,255,255,0.03); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+  .howTo { background: transparent; min-height: 246px; perspective: 1200px; overflow: hidden; }
+  .howToInner { position: relative; width: 100%; min-height: 246px; transform-style: preserve-3d; transition: transform 0.7s ease; }
+  .howToFlipped { transform: rotateY(180deg); }
+  .howToFace { position: absolute; inset: 0; padding: 18px 24px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.03); backface-visibility: hidden; display: flex; flex-direction: column; }
+  .howToBack { transform: rotateY(180deg); }
+  .howToContent { display: flex; flex-direction: column; gap: 6px; }
 
   /* 높이를 꽉 채우기 위해 flex-grow 적용 */
   .miniRank { background: rgba(255,255,255,0.03); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); flex-grow: 1; display: flex; flex-direction: column; }
 
-  .howTo h3, .miniRank h3 { color: #FFC93C; margin-bottom: 15px; font-size: 16px; }
+  .howTo h3, .miniRank h3 { color: #FFC93C; margin-bottom: 12px; font-size: 16px; }
 
   /* 글자가 어색하게 떨어지지 않게 word-break: keep-all 추가 */
-  .howTo p { font-size: 13px; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; word-break: keep-all; }
+  .howTo p { font-size: 13px; color: #94a3b8; margin: 0; line-height: 1.5; word-break: keep-all; }
   .howTo strong { color: #e2e8f0; }
+  .exampleLine { color: #FFC93C !important; font-weight: 700; letter-spacing: 0.02em; }
+  .flipButton { margin-top: auto; align-self: flex-end; padding: 0; border: none; background: none; color: #7c8cff; font-size: 13px; font-weight: 700; cursor: pointer; line-height: 1; }
+  .flipButton:hover { color: #a8b1ff; }
 
   /* 스크롤 영역이 남은 공간을 채우도록 지정 */
   .rankList { flex-grow: 1; }

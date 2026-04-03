@@ -79,6 +79,22 @@ export default function Home() {
         )}
       </div>
 
+      <section className={styles.resourceSection}>
+        <h2>훈련 가이드</h2>
+        <p>아래 탭에서 원리, 루틴, 정책 내용을 빠르게 확인할 수 있습니다.</p>
+        <div className={styles.resourceLinks}>
+          <Link to="/about-nback" className={styles.resourceLink}>
+            N-Back 원리와 한계
+          </Link>
+          <Link to="/guide" className={styles.resourceLink}>
+            7일 훈련 루틴
+          </Link>
+          <Link to="/policy" className={styles.resourceLink}>
+            운영 정책 및 문의
+          </Link>
+        </div>
+      </section>
+
       <div className={styles.content}>
         <div className={styles.card}>
           <h1 className={styles.title}>N-BACK CHALLENGE</h1>
@@ -188,22 +204,6 @@ export default function Home() {
           </section>
         </div>
       </div>
-
-      <section className={styles.resourceSection}>
-        <h2>훈련 가이드</h2>
-        <p>게임 전에 아래 내용을 읽으면 점수를 더 안정적으로 올릴 수 있습니다.</p>
-        <div className={styles.resourceLinks}>
-          <Link to="/about-nback" className={styles.resourceLink}>
-            N-Back 원리와 한계 이해하기
-          </Link>
-          <Link to="/guide" className={styles.resourceLink}>
-            7일 훈련 루틴과 난이도 조절법
-          </Link>
-          <Link to="/policy" className={styles.resourceLink}>
-            운영 정책 및 개인정보 안내
-          </Link>
-        </div>
-      </section>
 
       {isProfileModalOpen && <ProfileModal onClose={() => setIsProfileModalOpen(false)} />}
     </div>

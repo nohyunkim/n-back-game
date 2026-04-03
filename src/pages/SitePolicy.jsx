@@ -5,6 +5,15 @@ export default function SitePolicy() {
   return (
     <main className={styles.page}>
       <article className={styles.content}>
+        <header className={styles.topNav}>
+          <Link to="/" className={styles.backButton}>홈으로</Link>
+          <nav className={styles.tabs}>
+            <Link to="/about-nback" className={styles.tabLink}>원리</Link>
+            <Link to="/guide" className={styles.tabLink}>훈련 루틴</Link>
+            <Link to="/policy" className={`${styles.tabLink} ${styles.tabActive}`}>정책/문의</Link>
+          </nav>
+        </header>
+
         <h1 className={styles.title}>운영 정책 및 개인정보 안내</h1>
         <p className={styles.subtitle}>
           본 페이지는 서비스 운영 기준, 데이터 저장 범위, 이용자 권리 안내를 목적으로 제공됩니다.
@@ -56,11 +65,6 @@ export default function SitePolicy() {
           </p>
         </section>
 
-        <nav className={styles.footerLinks}>
-          <Link to="/">홈으로</Link>
-          <Link to="/about-nback">N-Back 원리</Link>
-          <Link to="/guide">훈련 가이드</Link>
-        </nav>
       </article>
     </main>
   );

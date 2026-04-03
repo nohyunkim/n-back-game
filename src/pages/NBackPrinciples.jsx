@@ -5,6 +5,15 @@ export default function NBackPrinciples() {
   return (
     <main className={styles.page}>
       <article className={styles.content}>
+        <header className={styles.topNav}>
+          <Link to="/" className={styles.backButton}>홈으로</Link>
+          <nav className={styles.tabs}>
+            <Link to="/about-nback" className={`${styles.tabLink} ${styles.tabActive}`}>원리</Link>
+            <Link to="/guide" className={styles.tabLink}>훈련 루틴</Link>
+            <Link to="/policy" className={styles.tabLink}>정책/문의</Link>
+          </nav>
+        </header>
+
         <h1 className={styles.title}>N-Back 원리와 기대할 수 있는 변화</h1>
         <p className={styles.subtitle}>
           N-Back은 작업 기억(Working Memory)을 지속적으로 사용하게 만드는 과제로, 짧은 시간 동안
@@ -49,11 +58,6 @@ export default function NBackPrinciples() {
           </p>
         </section>
 
-        <nav className={styles.footerLinks}>
-          <Link to="/">홈으로</Link>
-          <Link to="/guide">훈련 가이드</Link>
-          <Link to="/policy">운영 정책</Link>
-        </nav>
       </article>
     </main>
   );

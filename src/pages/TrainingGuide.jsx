@@ -5,6 +5,15 @@ export default function TrainingGuide() {
   return (
     <main className={styles.page}>
       <article className={styles.content}>
+        <header className={styles.topNav}>
+          <Link to="/" className={styles.backButton}>홈으로</Link>
+          <nav className={styles.tabs}>
+            <Link to="/about-nback" className={styles.tabLink}>원리</Link>
+            <Link to="/guide" className={`${styles.tabLink} ${styles.tabActive}`}>훈련 루틴</Link>
+            <Link to="/policy" className={styles.tabLink}>정책/문의</Link>
+          </nav>
+        </header>
+
         <h1 className={styles.title}>7일 N-Back 훈련 가이드</h1>
         <p className={styles.subtitle}>
           훈련 강도를 무리하게 올리기보다 정확도와 반응속도를 균형 있게 관리하는 것이 중요합니다. 아래
@@ -46,11 +55,6 @@ export default function TrainingGuide() {
           </p>
         </section>
 
-        <nav className={styles.footerLinks}>
-          <Link to="/">홈으로</Link>
-          <Link to="/about-nback">N-Back 원리</Link>
-          <Link to="/policy">운영 정책</Link>
-        </nav>
       </article>
     </main>
   );

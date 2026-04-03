@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ProfileModal from "../components/common/ProfileModal";
+import SiteFooter from "../components/common/SiteFooter";
 import { DEFAULT_GAME_CONFIG, GAME_LIMITS, createGameConfig } from "../constants/gameConfig";
 import { useAuth } from "../contexts/useAuth";
 import { getDailyRanking } from "../services/rankingApi";
@@ -78,22 +78,6 @@ export default function Home() {
           </div>
         )}
       </div>
-
-      <section className={styles.resourceSection}>
-        <h2>훈련 가이드</h2>
-        <p>아래 탭에서 원리, 루틴, 정책 내용을 빠르게 확인할 수 있습니다.</p>
-        <div className={styles.resourceLinks}>
-          <Link to="/about-nback" className={styles.resourceLink}>
-            N-Back 원리와 한계
-          </Link>
-          <Link to="/guide" className={styles.resourceLink}>
-            7일 훈련 루틴
-          </Link>
-          <Link to="/policy" className={styles.resourceLink}>
-            운영 정책 및 문의
-          </Link>
-        </div>
-      </section>
 
       <div className={styles.content}>
         <div className={styles.card}>
@@ -206,6 +190,7 @@ export default function Home() {
       </div>
 
       {isProfileModalOpen && <ProfileModal onClose={() => setIsProfileModalOpen(false)} />}
+      <SiteFooter />
     </div>
   );
 }

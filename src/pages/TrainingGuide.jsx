@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SiteFooter from "../components/common/SiteFooter";
 import styles from "./InfoPage.module.css";
 
 export default function TrainingGuide() {
@@ -56,6 +57,7 @@ export default function TrainingGuide() {
         </section>
 
       </article>
+      <SiteFooter />
     </main>
   );
 }

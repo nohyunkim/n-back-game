@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import SiteFooter from "../components/common/SiteFooter";
 import { getDailyRanking } from "../services/rankingApi";
 import styles from "./Ranking.module.css";
 
@@ -65,6 +66,7 @@ export default function Ranking() {
       <button className={styles.backButton} onClick={() => navigate("/")}>
         홈으로 돌아가기
       </button>
+      <SiteFooter />
     </div>
   );
 }

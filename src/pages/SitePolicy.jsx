@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SiteFooter from "../components/common/SiteFooter";
 import styles from "./InfoPage.module.css";
 
 export default function SitePolicy() {
@@ -19,7 +20,7 @@ export default function SitePolicy() {
           본 페이지는 서비스 운영 기준, 데이터 저장 범위, 이용자 권리 안내를 목적으로 제공됩니다.
         </p>
 
-        <section className={styles.section}>
+        <section id="service" className={styles.section}>
           <h2>서비스 목적</h2>
           <p>
             N-Back Challenge는 인지 훈련을 위한 웹 기반 게임 서비스입니다. 이용자는 로그인 후 점수를
@@ -27,7 +28,7 @@ export default function SitePolicy() {
           </p>
         </section>
 
-        <section className={styles.section}>
+        <section id="privacy" className={styles.section}>
           <h2>수집 및 저장되는 정보</h2>
           <ul>
             <li>Google 로그인 식별자(UID)</li>
@@ -40,7 +41,7 @@ export default function SitePolicy() {
           </p>
         </section>
 
-        <section className={styles.section}>
+        <section id="terms" className={styles.section}>
           <h2>이용자 권리</h2>
           <ul>
             <li>언제든지 로그아웃할 수 있습니다.</li>
@@ -49,7 +50,7 @@ export default function SitePolicy() {
           </ul>
         </section>
 
-        <section className={styles.section}>
+        <section id="contact" className={styles.section}>
           <h2>문의</h2>
           <p>
             서비스 관련 문의는 아래 폼으로 접수해 주세요.
@@ -66,6 +67,7 @@ export default function SitePolicy() {
         </section>
 
       </article>
+      <SiteFooter />
     </main>
   );
 }

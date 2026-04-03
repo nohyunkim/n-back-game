@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  padding: 40px 20px;
+  padding: 40px 20px 16px;
   background-color: #1a1c23;
   color: #fff;
   display: flex;
@@ -123,7 +123,7 @@
 
 @media (max-width: 640px) {
   .container {
-    padding: 24px 16px 40px;
+    padding: 24px 16px 12px;
   }
 
   .title {

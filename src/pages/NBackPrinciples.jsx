@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SiteFooter from "../components/common/SiteFooter";
 import styles from "./InfoPage.module.css";
 
 export default function NBackPrinciples() {
@@ -59,6 +60,7 @@ export default function NBackPrinciples() {
         </section>
 
       </article>
+      <SiteFooter />
     </main>
   );
 }

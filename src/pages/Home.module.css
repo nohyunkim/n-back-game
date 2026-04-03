@@ -1,11 +1,11 @@
-  .container {
-    min-height: 100vh;
-    background-color: #0f172a;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-  }
+.container {
+  min-height: 100vh;
+  background-color: #0f172a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px 16px;
+}
 
   .inAppNotice {
     width: min(900px, 100%);
@@ -140,72 +140,9 @@
   .rankRow b { color: #FFC93C; }
   .moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }
 
-  .resourceSection {
-    width: min(900px, 100%);
-    margin-top: 8px;
-    margin-bottom: 10px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: rgba(15, 23, 42, 0.55);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .resourceSection h2 {
-    margin: 0;
-    font-size: 14px;
-    color: #f8fafc;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-  }
-
-  .resourceSection p {
-    margin: 0;
-    color: #94a3b8;
-    font-size: 12px;
-    line-height: 1.35;
-    word-break: keep-all;
-    line-break: loose;
-    text-wrap: pretty;
-  }
-
-  .resourceLinks {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-left: auto;
-  }
-
-  .resourceLink {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: #dbeafe;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.35;
-    padding: 7px 10px;
-    border-radius: 999px;
-    background: rgba(49, 65, 155, 0.24);
-    border: 1px solid rgba(96, 165, 250, 0.34);
-    transition: background-color 0.2s ease, transform 0.2s ease;
-    word-break: keep-all;
-    line-break: loose;
-    text-wrap: pretty;
-  }
-
-  .resourceLink:hover {
-    background: rgba(67, 92, 207, 0.32);
-    transform: translateY(-2px);
-  }
-
   @media (max-width: 640px) {
-    .container {
-      padding: 76px 16px 28px;
+  .container {
+      padding: 76px 16px 12px;
     }
 
     .inAppNotice {
@@ -326,34 +263,4 @@
       font-size: 12px;
     }
 
-    .resourceSection {
-      margin-top: 10px;
-      margin-bottom: 8px;
-      padding: 10px;
-      align-items: flex-start;
-    }
-
-    .resourceSection h2 {
-      font-size: 13px;
-    }
-
-    .resourceSection p {
-      width: 100%;
-      font-size: 11px;
-    }
-
-    .resourceLinks {
-      display: grid;
-      grid-template-columns: 1fr;
-      width: 100%;
-      margin-left: 0;
-      gap: 6px;
-    }
-
-    .resourceLink {
-      font-size: 12px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      justify-content: flex-start;
-    }
   }

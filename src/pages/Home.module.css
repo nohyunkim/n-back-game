@@ -136,131 +136,130 @@
   }
 
   .rankRow { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-  .rankRow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; color: white; }
-  .rankRow b { color: #FFC93C; }
-  .moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }
+.rankRow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; color: white; }
+.rankRow b { color: #FFC93C; }
+.moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }
 
-  @media (max-width: 640px) {
+@media (max-width: 640px) {
   .container {
-      padding: 76px 16px 12px;
-    }
-
-    .inAppNotice {
-      flex-direction: column;
-      align-items: stretch;
-      margin-bottom: 14px;
-      padding: 14px 14px 12px;
-    }
-
-    .noticeClose {
-      align-self: flex-end;
-    }
-
-    .authBar {
-      position: static;
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 14px;
-    }
-
-    .loginBtn {
-      min-height: 40px;
-      padding: 0 12px 0 10px;
-      gap: 10px;
-    }
-
-    .profileBadge {
-      max-width: 100%;
-      padding: 6px 10px;
-    }
-
-    .profileBadge span {
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .content {
-      gap: 16px;
-      margin-top: 0;
-    }
-
-    .card {
-      min-width: 0;
-      padding: 24px 18px;
-      border-radius: 20px;
-    }
-
-    .title {
-      font-size: 26px;
-      line-height: 1.1;
-    }
-
-    .subtitle {
-      font-size: 13px;
-      margin-bottom: 28px;
-    }
-
-    .settings {
-      gap: 18px;
-      margin-bottom: 28px;
-    }
-
-    .settingItem label {
-      font-size: 14px;
-      gap: 12px;
-    }
-
-    .startBtn {
-      padding: 16px;
-      font-size: 18px;
-      border-radius: 14px;
-    }
-
-    .sideInfo {
-      width: 100%;
-    }
-
-    .howTo,
-    .howToInner {
-      min-height: 220px;
-    }
-
-    .howToFace {
-      padding: 16px 16px 14px;
-      border-radius: 18px;
-    }
-
-    .howTo h3,
-    .miniRank h3 {
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
-
-    .howTo p {
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .miniRank {
-      padding: 18px 16px;
-      border-radius: 18px;
-    }
-
-    .rankRow {
-      font-size: 13px;
-      gap: 10px;
-    }
-
-    .rankRow span {
-      max-width: 70%;
-    }
-
-    .moreBtn {
-      margin-top: 6px;
-      font-size: 12px;
-    }
-
+    padding: 76px 16px 12px;
   }
+
+  .inAppNotice {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 14px;
+    padding: 14px 14px 12px;
+  }
+
+  .noticeClose {
+    align-self: flex-end;
+  }
+
+  .authBar {
+    position: static;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+  }
+
+  .loginBtn {
+    min-height: 40px;
+    padding: 0 12px 0 10px;
+    gap: 10px;
+  }
+
+  .profileBadge {
+    max-width: 100%;
+    padding: 6px 10px;
+  }
+
+  .profileBadge span {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content {
+    gap: 16px;
+    margin-top: 0;
+  }
+
+  .card {
+    min-width: 0;
+    padding: 24px 18px;
+    border-radius: 20px;
+  }
+
+  .title {
+    font-size: 26px;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  .settings {
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  .settingItem label {
+    font-size: 14px;
+    gap: 12px;
+  }
+
+  .startBtn {
+    padding: 16px;
+    font-size: 18px;
+    border-radius: 14px;
+  }
+
+  .sideInfo {
+    width: 100%;
+  }
+
+  .howTo,
+  .howToInner {
+    min-height: 220px;
+  }
+
+  .howToFace {
+    padding: 16px 16px 14px;
+    border-radius: 18px;
+  }
+
+  .howTo h3,
+  .miniRank h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .howTo p {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .miniRank {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  .rankRow {
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .rankRow span {
+    max-width: 70%;
+  }
+
+  .moreBtn {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+}

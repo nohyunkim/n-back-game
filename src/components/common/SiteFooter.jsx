@@ -13,6 +13,22 @@ const MODAL_CONTENT = {
       "의료적 진단이나 치료 목적이 아닌 개인 훈련용 서비스로 운영됩니다.",
     ],
   },
+  metrics: {
+    title: "지표 해석 가이드",
+    body: [
+      "점수는 한 번의 결과보다 최근 며칠간의 흐름으로 보는 편이 더 정확합니다.",
+      "정답률이 자주 흔들리면 난도나 속도가 아직 맞지 않는 경우가 많으니 먼저 안정적인 정확도를 만드는 것이 좋습니다.",
+      "반응 속도가 빨라도 오답이 함께 늘어나면 무리한 플레이일 수 있어 정확도와 속도를 같이 확인하는 편이 좋습니다.",
+    ],
+  },
+  faq: {
+    title: "자주 묻는 질문",
+    body: [
+      "처음에는 1-Back 또는 2-Back에서 짧은 세션으로 시작하는 것이 부담이 적습니다.",
+      "점수가 낮더라도 같은 설정에서 정확도가 조금씩 안정되면 훈련이 진행되고 있는 것으로 볼 수 있습니다.",
+      "정책, 개인정보, 이용 조건은 푸터 항목에서 바로 확인할 수 있고, 문의는 오류 제보 링크를 통해 접수할 수 있습니다.",
+    ],
+  },
   privacy: {
     title: "개인정보처리방침",
     body: [
@@ -44,9 +60,16 @@ export default function SiteFooter() {
   return (
     <>
       <footer className={styles.footer}>
-        <nav className={styles.nav} aria-label="Footer">
+        <div className={styles.row} aria-label="Footer">
+          <nav className={styles.nav} aria-label="Footer Links">
           <button type="button" className={styles.linkButton} onClick={() => setOpenKey("service")}>
             서비스 소개
+          </button>
+          <button type="button" className={styles.linkButton} onClick={() => setOpenKey("metrics")}>
+            지표 해석 가이드
+          </button>
+          <button type="button" className={styles.linkButton} onClick={() => setOpenKey("faq")}>
+            자주 묻는 질문
           </button>
           <button type="button" className={styles.linkButton} onClick={() => setOpenKey("privacy")}>
             개인정보처리방침
@@ -57,7 +80,8 @@ export default function SiteFooter() {
           <a href={CONTACT_URL} target="_blank" rel="noreferrer" className={styles.link}>
             문의/오류 제보
           </a>
-        </nav>
+          </nav>
+        </div>
         <p className={styles.copy}>© 2026 N-Back Challenge. All Rights Reserved.</p>
       </footer>
 

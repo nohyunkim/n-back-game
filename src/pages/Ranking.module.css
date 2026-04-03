@@ -82,6 +82,45 @@
   cursor: pointer;
 }
 
+.infoPanel {
+  width: 100%;
+  max-width: 450px;
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #333c56;
+  background-color: #212634;
+}
+
+.infoPanel h2 {
+  margin: 0;
+  font-size: 16px;
+  color: #dbeafe;
+}
+
+.infoPanel p {
+  margin: 8px 0 10px;
+  font-size: 13px;
+  color: #bac2d3;
+  line-height: 1.5;
+}
+
+.infoLinks {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.infoLinks a {
+  text-decoration: none;
+  color: #a5b4fc;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #4c5ab0;
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
 @media (max-width: 640px) {
   .container {
     padding: 24px 16px 40px;
@@ -123,5 +162,18 @@
   .backButton {
     width: 100%;
     margin-top: 24px;
+  }
+
+  .infoPanel {
+    margin-top: 14px;
+    padding: 12px;
+  }
+
+  .infoPanel h2 {
+    font-size: 15px;
+  }
+
+  .infoPanel p {
+    font-size: 12px;
   }
 }

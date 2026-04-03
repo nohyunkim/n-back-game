@@ -140,6 +140,52 @@
   .rankRow b { color: #FFC93C; }
   .moreBtn { width: 100%; background: none; border: none; color: #6366f1; cursor: pointer; font-size: 13px; text-align: right; margin-top: 10px; }
 
+  .resourceSection {
+    width: min(900px, 100%);
+    margin-top: 22px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .resourceSection h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #f8fafc;
+  }
+
+  .resourceSection p {
+    margin: 8px 0 14px;
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .resourceLinks {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .resourceLink {
+    text-decoration: none;
+    color: #dbeafe;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(99, 102, 241, 0.14);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .resourceLink:hover {
+    background: rgba(99, 102, 241, 0.22);
+    transform: translateY(-2px);
+  }
+
   @media (max-width: 640px) {
     .container {
       padding: 76px 16px 28px;
@@ -261,5 +307,28 @@
     .moreBtn {
       margin-top: 6px;
       font-size: 12px;
+    }
+
+    .resourceSection {
+      margin-top: 14px;
+      padding: 16px;
+    }
+
+    .resourceSection h2 {
+      font-size: 16px;
+    }
+
+    .resourceSection p {
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .resourceLinks {
+      grid-template-columns: 1fr;
+    }
+
+    .resourceLink {
+      font-size: 13px;
+      padding: 10px 11px;
     }
   }

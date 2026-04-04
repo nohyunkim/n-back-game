@@ -1,7 +1,7 @@
 # N-Back Challenge
 
 React + Vite 기반의 웹 N-Back 훈련 서비스입니다.  
-Google 로그인 후 게임을 플레이하고, Firebase Firestore에 일일 최고 점수를 저장해 랭킹을 보여줍니다.
+Google 로그인 후 게임을 플레이하고, Firebase Firestore에 점수를 저장해 일일 랭킹과 전체 랭킹을 보여줍니다.
 
 ## 주요 기능
 
@@ -11,7 +11,9 @@ Google 로그인 후 게임을 플레이하고, Firebase Firestore에 일일 최
 - 키보드 `Space` 또는 버튼 입력 지원
 - 콤보, 정확도, 평균 반응 속도 결과 제공
 - Google 로그인 및 프로필 기반 닉네임 관리
-- 일일 최고 점수 기준 `Top 10` 랭킹 제공
+- 인앱 브라우저 대응 Google 로그인 (`popup` 실패 시 `redirect` fallback)
+- 홈 화면 `전체 Top 3` 미리보기
+- `오늘 랭킹 Top 10` / `전체 Top 10` 탭 제공
 - 푸터 정책/안내 모달 제공
   - 서비스 소개
   - 지표 해석 가이드
@@ -35,7 +37,7 @@ Google 로그인 후 게임을 플레이하고, Firebase Firestore에 일일 최
 
 - 게임 옵션 설정
 - 게임 방법 안내 카드
-- 오늘의 Top 3 미리보기
+- 전체 Top 3 미리보기
 - Google 로그인 / 프로필 진입
 - 하단 푸터 정책/안내 모달
 
@@ -48,6 +50,7 @@ Google 로그인 후 게임을 플레이하고, Firebase Firestore에 일일 최
 ### 랭킹
 
 - 오늘 날짜 기준 Top 10 랭킹 표시
+- 누적 최고 기록 기준 전체 Top 10 랭킹 표시
 - 사용자 프로필 이미지와 닉네임 표시
 
 ### 안내 페이지
@@ -106,13 +109,17 @@ VITE_FIREBASE_APP_ID=
 - `dateString`
 - `timestamp`
 
-점수는 `uid_YYYY-MM-DD` 형식의 문서 ID로 저장되며, 같은 날에는 더 높은 점수만 갱신됩니다.
+점수는 `uid_YYYY-MM-DD` 형식의 문서 ID로 저장되며, 같은 날에는 더 높은 점수만 갱신됩니다.  
+전체 랭킹은 `scores` 컬렉션 전체에서 사용자별 최고 점수 1개만 반영해 집계합니다.
 
 ## 현재 상태
 
 - 홈, 게임, 랭킹, 안내 페이지 흐름이 동작 중
+- 홈 화면과 랭킹 화면 UI 정리 완료
+- 인앱 브라우저에서 Google 로그인 fallback 적용
 - 푸터 정책/안내 항목은 모달 팝업으로 확인 가능
 - `Esc` 키로 모달 닫기 지원
+- `npm run lint`
 - `npm run build` 확인 완료
 
 ## 다음에 보면 좋은 것

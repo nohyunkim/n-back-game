@@ -1,31 +1,154 @@
 .container {
   min-height: 100vh;
   padding: 40px 20px 16px;
-  background-color: #1a1c23;
+  background:
+    radial-gradient(circle at top, rgba(84, 107, 255, 0.16), transparent 28%),
+    linear-gradient(180deg, #171b28 0%, #151923 100%);
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+}
+
+.backIconButton {
+  position: absolute;
+  top: 34px;
+  left: 24px;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #dbe4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.backIconButton:hover {
+  transform: translateY(-1px);
+  border-color: rgba(129, 140, 248, 0.28);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.hero {
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.heroBadge {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #fcd34d;
+  background: linear-gradient(145deg, rgba(255, 200, 70, 0.18), rgba(77, 106, 255, 0.18));
+  border: 1px solid rgba(252, 211, 77, 0.18);
+  box-shadow: 0 20px 40px rgba(9, 12, 20, 0.32);
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: #95a1d9;
 }
 
 .title {
+  font-size: 38px;
+  font-weight: 800;
+  margin: 0;
+  color: #eef2ff;
+  letter-spacing: -0.03em;
+}
+
+.tabBar {
+  width: 100%;
+  max-width: 860px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 8px;
+  border-radius: 22px;
+  background: rgba(35, 40, 58, 0.88);
+  border: 1px solid rgba(129, 140, 248, 0.14);
+}
+
+.tabButton {
+  border: 0;
+  background: transparent;
+  color: #aeb8d8;
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.tabButton:hover {
+  color: #e5e7eb;
+}
+
+.tabActive {
+  background: linear-gradient(135deg, #4d6aff, #6378ff);
+  color: #f8fafc;
+  box-shadow: 0 16px 30px rgba(77, 106, 255, 0.28);
+}
+
+.panel {
+  width: 100%;
+  max-width: 860px;
+  padding: 22px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(31, 36, 52, 0.98), rgba(22, 26, 38, 0.96));
+  border: 1px solid rgba(129, 140, 248, 0.1);
+  box-shadow: 0 30px 80px rgba(6, 10, 18, 0.36);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.panelLabel {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #95a1d9;
+}
+
+.panelTitle {
+  margin: 0;
   font-size: 28px;
-  font-weight: bold;
-  margin: 0 0 30px;
-  color: #4d6aff;
+  color: #f8fafc;
+  letter-spacing: -0.03em;
 }
 
 .loadingText,
 .emptyText {
   text-align: center;
-  color: #888;
+  color: #8b97b9;
   font-size: 15px;
-  padding: 28px 0;
+  padding: 42px 0;
 }
 
 .rankingList {
   width: 100%;
-  max-width: 450px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -34,91 +157,60 @@
 .rankingItem {
   display: flex;
   align-items: center;
-  background-color: #262a35;
-  padding: 15px 20px;
-  border-radius: 12px;
-  transition: transform 0.2s;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px 18px;
+  border-radius: 18px;
+  transition: transform 0.2s, border-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .rankingItem:hover {
-  transform: scale(1.02);
+  transform: translateY(-1px);
+  border-color: rgba(129, 140, 248, 0.2);
 }
 
 .rankNumber {
-  width: 35px;
+  width: 46px;
   font-size: 18px;
   font-weight: bold;
-  color: #e65a2d;
-  font-style: italic;
+  color: #fbbf24;
+  text-align: center;
 }
 
 .profileImage {
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  margin: 0 15px;
-  border: 2px solid #333;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  object-fit: cover;
+}
+
+.userMeta {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .nickname {
-  flex: 1;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subMeta {
+  color: #8f9ab8;
+  font-size: 12px;
 }
 
 .score {
   font-size: 18px;
   font-weight: bold;
-  color: #4d6aff;
-}
-
-.backButton {
-  margin-top: 40px;
-  padding: 12px 30px;
-  background-color: transparent;
-  border: 1px solid #444;
-  color: #aaa;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.infoPanel {
-  width: 100%;
-  max-width: 450px;
-  margin-top: 18px;
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #333c56;
-  background-color: #212634;
-}
-
-.infoPanel h2 {
-  margin: 0;
-  font-size: 16px;
-  color: #dbeafe;
-}
-
-.infoPanel p {
-  margin: 8px 0 10px;
-  font-size: 13px;
-  color: #bac2d3;
-  line-height: 1.5;
-}
-
-.infoLinks {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.infoLinks a {
-  text-decoration: none;
-  color: #a5b4fc;
-  font-size: 12px;
-  font-weight: 700;
-  border: 1px solid #4c5ab0;
-  border-radius: 999px;
-  padding: 6px 10px;
+  color: #dbe4ff;
 }
 
 @media (max-width: 640px) {
@@ -126,9 +218,56 @@
     padding: 24px 16px 12px;
   }
 
+  .backIconButton {
+    top: 18px;
+    left: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .hero {
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-top: 34px;
+  }
+
+  .heroBadge {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    font-size: 22px;
+  }
+
   .title {
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 30px;
+  }
+
+  .tabBar {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 6px;
+    border-radius: 18px;
+  }
+
+  .tabButton {
+    font-size: 14px;
+    padding: 12px 14px;
+  }
+
+  .panel {
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .panelHeader {
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  .panelTitle {
+    font-size: 23px;
   }
 
   .rankingList {
@@ -137,12 +276,12 @@
 
   .rankingItem {
     padding: 13px 14px;
-    border-radius: 12px;
+    border-radius: 14px;
     gap: 10px;
   }
 
   .rankNumber {
-    width: 30px;
+    width: 36px;
     font-size: 15px;
   }
 
@@ -155,25 +294,11 @@
     font-size: 14px;
   }
 
+  .subMeta {
+    font-size: 11px;
+  }
+
   .score {
     font-size: 16px;
-  }
-
-  .backButton {
-    width: 100%;
-    margin-top: 24px;
-  }
-
-  .infoPanel {
-    margin-top: 14px;
-    padding: 12px;
-  }
-
-  .infoPanel h2 {
-    font-size: 15px;
-  }
-
-  .infoPanel p {
-    font-size: 12px;
   }
 }

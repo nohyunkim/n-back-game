@@ -4,7 +4,7 @@ import ProfileModal from "../components/common/ProfileModal";
 import SiteFooter from "../components/common/SiteFooter";
 import { DEFAULT_GAME_CONFIG, GAME_LIMITS, createGameConfig } from "../constants/gameConfig";
 import { useAuth } from "../contexts/useAuth";
-import { getDailyRanking } from "../services/rankingApi";
+import { getAllTimeRanking } from "../services/rankingApi";
 import styles from "./Home.module.css";
 
 export default function Home() {
@@ -19,9 +19,9 @@ export default function Home() {
   const [totalSteps, setTotalSteps] = useState(DEFAULT_GAME_CONFIG.totalSteps);
   const [speed, setSpeed] = useState(DEFAULT_GAME_CONFIG.speed);
 
-  // 홈에서는 랭킹 상위 3개만 미리 보여준다.
+  // 홈에서는 전체 랭킹 상위 3개를 미리 보여준다.
   useEffect(() => {
-    getDailyRanking().then((data) => setTopRanking(data.slice(0, 3)));
+    getAllTimeRanking().then((data) => setTopRanking(data.slice(0, 3)));
   }, []);
 
   const handleLogin = async () => {
@@ -165,15 +165,15 @@ export default function Home() {
           </section>
 
           <section className={styles.miniRank}>
-            <h3>오늘의 Top 3</h3>
+            <h3>전체 Top 3</h3>
             <div className={styles.rankList}>
               {topRanking.length > 0 ? (
                 topRanking.map((rankingItem, index) => (
                   <div key={rankingItem.id} className={styles.rankRow}>
-                    <span>
+                    <span className={styles.rankName}>
                       {index + 1}. {rankingItem.nickname}
                     </span>
-                    <b>{rankingItem.score}</b>
+                    <b>{rankingItem.score}점</b>
                   </div>
                 ))
               ) : (
@@ -181,7 +181,7 @@ export default function Home() {
               )}
             </div>
             <button onClick={() => navigate("/ranking")} className={styles.moreBtn}>
-              전체 랭킹 보기
+              랭킹 보러 가기
             </button>
           </section>
         </div>

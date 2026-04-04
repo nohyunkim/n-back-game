@@ -11,14 +11,16 @@
 
     // 별명 변경 처리 함수
     const handleChangeNickname = async () => {
+        const normalizedNickname = newNickname.trim();
+
         try {
         setError('');
-        if (newNickname === nickname) {
+        if (normalizedNickname === nickname) {
             setError('현재 별명과 같습니다.');
             return;
         }
-        await updateUserNickname(currentUser.uid, newNickname);
-        setNickname(newNickname); // 전역 상태 업데이트 (홈 화면 반영)
+        await updateUserNickname(currentUser.uid, normalizedNickname);
+        setNickname(normalizedNickname); // 전역 상태 업데이트 (홈 화면 반영)
         setNewNickname('');
         onClose(); // 모달 닫기
         alert('별명이 변경되었습니다.');

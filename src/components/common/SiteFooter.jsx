@@ -129,15 +129,6 @@ export default function SiteFooter() {
 
   useEffect(() => {
     if (!activeModal) {
-      setExpandedSectionId(null);
-      return;
-    }
-
-    setExpandedSectionId(activeModal.sections[0]?.id ?? null);
-  }, [activeModal]);
-
-  useEffect(() => {
-    if (!activeModal) {
       return undefined;
     }
 
@@ -151,9 +142,19 @@ export default function SiteFooter() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeModal]);
 
+  const openModal = (key) => {
+    setOpenKey(key);
+    setExpandedSectionId(MODAL_CONTENT[key]?.sections[0]?.id ?? null);
+  };
+
+  const closeModal = () => {
+    setOpenKey(null);
+    setExpandedSectionId(null);
+  };
+
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
-      setOpenKey(null);
+      closeModal();
     }
   };
 
@@ -162,19 +163,19 @@ export default function SiteFooter() {
       <footer className={styles.footer}>
         <div className={styles.row} aria-label="Footer">
           <nav className={styles.nav} aria-label="Footer Links">
-          <button type="button" className={styles.linkButton} onClick={() => setOpenKey("service")}>
+          <button type="button" className={styles.linkButton} onClick={() => openModal("service")}>
             서비스 소개
           </button>
-          <button type="button" className={styles.linkButton} onClick={() => setOpenKey("metrics")}>
+          <button type="button" className={styles.linkButton} onClick={() => openModal("metrics")}>
             지표 해석 가이드
           </button>
-          <button type="button" className={styles.linkButton} onClick={() => setOpenKey("faq")}>
+          <button type="button" className={styles.linkButton} onClick={() => openModal("faq")}>
             자주 묻는 질문
           </button>
-          <button type="button" className={styles.linkButton} onClick={() => setOpenKey("privacy")}>
+          <button type="button" className={styles.linkButton} onClick={() => openModal("privacy")}>
             개인정보처리방침
           </button>
-          <button type="button" className={styles.linkButton} onClick={() => setOpenKey("terms")}>
+          <button type="button" className={styles.linkButton} onClick={() => openModal("terms")}>
             이용약관
           </button>
           <a href={CONTACT_URL} target="_blank" rel="noreferrer" className={styles.link}>
@@ -188,7 +189,7 @@ export default function SiteFooter() {
       {activeModal && (
         <div className={styles.overlay} onClick={handleOverlayClick} role="presentation">
           <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="site-footer-modal-title">
-            <button type="button" className={styles.closeButton} onClick={() => setOpenKey(null)} aria-label="닫기">
+            <button type="button" className={styles.closeButton} onClick={closeModal} aria-label="닫기">
               ×
             </button>
             <h2 id="site-footer-modal-title" className={styles.modalTitle}>

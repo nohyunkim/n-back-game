@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import SiteFooter from "../components/common/SiteFooter";
 import { getDailyRanking } from "../services/rankingApi";
@@ -49,19 +48,6 @@ export default function Ranking() {
           )}
         </div>
       )}
-
-      <section className={styles.infoPanel}>
-        <h2>점수 해석 팁</h2>
-        <p>
-          하루 점수는 컨디션에 따라 크게 달라질 수 있습니다. 3일 이동 평균으로 추세를 보면서
-          난이도를 조절해 보세요.
-        </p>
-        <div className={styles.infoLinks}>
-          <Link to="/guide">훈련 가이드 보기</Link>
-          <Link to="/about-nback">N-Back 원리 보기</Link>
-          <Link to="/policy">운영 정책 보기</Link>
-        </div>
-      </section>
 
       <button className={styles.backButton} onClick={() => navigate("/")}>
         홈으로 돌아가기

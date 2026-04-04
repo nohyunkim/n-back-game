@@ -1,7 +1,9 @@
-    import { db } from "./firebase";
-    import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "./firebase";
+import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 
-    export const syncUserProfile = async (user) => {
+const normalizeNickname = (nickname) => (typeof nickname === "string" ? nickname.trim() : "");
+
+export const syncUserProfile = async (user) => {
     if (!user) return;
 
     const userRef = doc(db, "users", user.uid);
@@ -44,13 +46,15 @@
     };
 
     export const updateUserNickname = async (uid, newNickname) => {
-    if (!newNickname || newNickname.length < 2 || newNickname.length > 12) {
+    const normalizedNickname = normalizeNickname(newNickname);
+
+    if (!normalizedNickname || normalizedNickname.length < 2 || normalizedNickname.length > 12) {
         throw new Error("별명은 2~12자 사이여야 합니다.");
     }
 
     // 닉네임 변경 시 중복 검사
     const usersRef = collection(db, "users");
-    const q = query(usersRef, where("nickname", "==", newNickname));
+    const q = query(usersRef, where("nickname", "==", normalizedNickname));
     const querySnapshot = await getDocs(q);
     
     if (!querySnapshot.empty) {
@@ -63,6 +67,6 @@
 
     const userRef = doc(db, "users", uid);
     await updateDoc(userRef, {
-        nickname: newNickname,
+        nickname: normalizedNickname,
     });
     };

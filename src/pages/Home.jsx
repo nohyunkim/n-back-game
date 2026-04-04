@@ -5,17 +5,15 @@ import SiteFooter from "../components/common/SiteFooter";
 import { DEFAULT_GAME_CONFIG, GAME_LIMITS, createGameConfig } from "../constants/gameConfig";
 import { useAuth } from "../contexts/useAuth";
 import { getDailyRanking } from "../services/rankingApi";
-import { isInAppBrowser } from "../utils/browser";
 import styles from "./Home.module.css";
 
 export default function Home() {
   const navigate = useNavigate();
   const { currentUser, nickname, loginWithGoogle } = useAuth();
-  const inAppBrowser = isInAppBrowser();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isHowToFlipped, setIsHowToFlipped] = useState(false);
   const [topRanking, setTopRanking] = useState([]);
-  const [showInAppNotice, setShowInAppNotice] = useState(inAppBrowser);
+  const [loginNotice, setLoginNotice] = useState("");
 
   const [nBack, setNBack] = useState(DEFAULT_GAME_CONFIG.nBack);
   const [totalSteps, setTotalSteps] = useState(DEFAULT_GAME_CONFIG.totalSteps);
@@ -26,15 +24,15 @@ export default function Home() {
     getDailyRanking().then((data) => setTopRanking(data.slice(0, 3)));
   }, []);
 
-  const handleLogin = () => {
-    // 인앱 브라우저에서는 로그인 시도 대신 안내만 보여준다.
-    if (inAppBrowser) {
-      setShowInAppNotice(true);
-      alert("카카오톡 같은 인앱 브라우저에서는 Google 로그인이 차단될 수 있어요. 기본 브라우저에서 다시 열어주세요.");
+  const handleLogin = async () => {
+    setLoginNotice("");
+
+    const result = await loginWithGoogle();
+    if (result?.ok || result?.redirected) {
       return;
     }
 
-    void loginWithGoogle();
+    setLoginNotice("로그인이 완료되지 않았습니다. 카카오톡 같은 인앱 브라우저에서는 Google 팝업이 막힐 수 있으니, 필요하면 기본 브라우저에서 다시 열어주세요.");
   };
 
   const handleStart = () => {
@@ -51,13 +49,13 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      {showInAppNotice && !currentUser && (
-        <div className={styles.inAppNotice}>
+      {loginNotice && !currentUser && (
+        <div className={styles.inAppNotice} role="status">
           <div>
-            <strong>인앱 브라우저에서는 Google 로그인이 막힐 수 있어요.</strong>
-            <p>카카오톡에서 열었다면 메뉴에서 기본 브라우저로 열어주세요.</p>
+            <strong>로그인 안내</strong>
+            <p>{loginNotice}</p>
           </div>
-          <button type="button" className={styles.noticeClose} onClick={() => setShowInAppNotice(false)}>
+          <button type="button" className={styles.noticeClose} onClick={() => setLoginNotice("")}>
             닫기
           </button>
         </div>

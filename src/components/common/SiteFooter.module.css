@@ -116,23 +116,58 @@
 }
 
 .modalTitle {
-  margin: 0 28px 14px 0;
+  margin: 0 28px 18px 0;
   color: #f8fafc;
   font-size: 22px;
   line-height: 1.25;
 }
 
-.modalBody {
+.accordion {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
 }
 
-.modalBody p {
+.accordionItem {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.accordionTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  border: none;
+  background: transparent;
+  color: #f8fafc;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.chevron {
+  color: #cbd5e1;
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.accordionPanel {
+  padding: 0 0 18px;
+}
+
+.accordionPanel p {
   margin: 0;
   color: #cbd5e1;
   font-size: 14px;
-  line-height: 1.65;
+  line-height: 1.8;
   word-break: keep-all;
 }
 
@@ -179,7 +214,12 @@
     margin-right: 24px;
   }
 
-  .modalBody p {
+  .accordionTrigger {
+    padding: 16px 0;
+    font-size: 15px;
+  }
+
+  .accordionPanel p {
     font-size: 13px;
     line-height: 1.6;
   }

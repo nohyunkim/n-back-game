@@ -44,14 +44,16 @@
   }
 
   .authBar { position: absolute; top: 20px; right: 34px; }
-  .authActions { display: flex; align-items: center; gap: 10px; }
+  .authActions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; width: 204px; }
   .loginBtn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     min-height: 40px;
+    width: 100%;
     padding: 0 14px 0 11px;
-    border-radius: 6px;
+    border-radius: 30px;
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.08);
     color: #f8fafc;
@@ -84,8 +86,9 @@
     font-size: 13px;
     letter-spacing: -0.01em;
   }
-  .profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; }
+  .profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; box-sizing: border-box; }
   .profileBadgeStatic { cursor: default; }
+  .profileBadgeCompact { justify-content: center; width: 100%; }
   .profileBadge img { width: 28px; height: 28px; border-radius: 50%; }
 
   /* align-items를 stretch로 변경하여 좌우 카드의 높이가 동일하게 맞도록 조정 */
@@ -167,9 +170,8 @@
   }
 
   .authActions {
-    width: 100%;
-    justify-content: flex-end;
-    flex-wrap: wrap;
+    width: min(204px, 100%);
+    align-items: flex-end;
   }
 
   .loginBtn {

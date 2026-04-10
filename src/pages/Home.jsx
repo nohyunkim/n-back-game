@@ -45,7 +45,7 @@ export default function Home() {
           {currentUser && (
             <div
               onClick={isGuest ? undefined : () => setIsProfileModalOpen(true)}
-              className={`${styles.profileBadge} ${isGuest ? styles.profileBadgeStatic : ""}`}
+              className={`${styles.profileBadge} ${isGuest ? `${styles.profileBadgeStatic} ${styles.profileBadgeCompact}` : ""}`}
             >
               <img src={currentUser.photoURL || DEFAULT_PROFILE_IMAGE} alt="프로필" />
               <span>{nickname}</span>

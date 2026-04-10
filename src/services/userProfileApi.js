@@ -1,72 +1,139 @@
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "./firebase";
-import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
+
+const FALLBACK_NICKNAME = "Player";
+const MAX_NICKNAME_LENGTH = 12;
 
 const normalizeNickname = (nickname) => (typeof nickname === "string" ? nickname.trim() : "");
+const isNicknameLengthValid = (nickname) => nickname.length >= 2 && nickname.length <= MAX_NICKNAME_LENGTH;
+const trimNicknameBase = (nickname) => normalizeNickname(nickname).slice(0, MAX_NICKNAME_LENGTH);
+
+const getTodayDateString = () => {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  return formatter.format(new Date());
+};
+
+const sanitizeBestScore = (bestScore) => (Number.isInteger(bestScore) && bestScore > 0 ? bestScore : 0);
+
+const sanitizeBestNBack = (bestNBack) => (Number.isInteger(bestNBack) ? bestNBack : null);
+
+const sanitizeBestUpdatedAt = (bestUpdatedAt) => bestUpdatedAt ?? null;
+
+const buildUserProfilePayload = ({ user, nickname, existingData }) => ({
+  uid: user.uid,
+  nickname,
+  photoURL: user.photoURL || null,
+  createdAt: existingData?.createdAt ?? new Date(),
+  bestScore: sanitizeBestScore(existingData?.bestScore),
+  bestNBack: sanitizeBestNBack(existingData?.bestNBack),
+  bestUpdatedAt: sanitizeBestUpdatedAt(existingData?.bestUpdatedAt),
+});
+
+const createUniqueNickname = async (preferredNickname, uid) => {
+  const trimmedBase = trimNicknameBase(preferredNickname);
+  const normalizedBase = isNicknameLengthValid(trimmedBase) ? trimmedBase : FALLBACK_NICKNAME;
+  const usersRef = collection(db, "users");
+  let candidate = normalizedBase;
+  let suffix = 1;
+
+  while (true) {
+    const nicknameQuery = query(usersRef, where("nickname", "==", candidate));
+    const snapshot = await getDocs(nicknameQuery);
+    const isAvailable = snapshot.empty || snapshot.docs.every((snapshotDoc) => snapshotDoc.id === uid);
+
+    if (isAvailable) {
+      return candidate;
+    }
+
+    const suffixLabel = `_${suffix}`;
+    const baseMaxLength = Math.max(MAX_NICKNAME_LENGTH - suffixLabel.length, 1);
+    candidate = `${normalizedBase.slice(0, baseMaxLength)}${suffixLabel}`;
+    suffix += 1;
+  }
+};
 
 export const syncUserProfile = async (user) => {
-    if (!user) return;
+  if (!user) {
+    return;
+  }
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
 
-    if (!userSnap.exists()) {
-        let initialNickname = user.displayName;
-        
-        // 가입 시 구글 이름이 이미 다른 유저의 닉네임과 겹치는지 검사
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("nickname", "==", initialNickname));
-        const snapshot = await getDocs(q);
-        
-        // 중복된다면 뒤에 임의의 숫자를 붙임
-        if (!snapshot.empty) {
-        initialNickname = `${initialNickname}_${Math.floor(Math.random() * 10000)}`;
-        }
+  if (!userSnap.exists()) {
+    const initialNickname = await createUniqueNickname(user.displayName, user.uid);
 
-        await setDoc(userRef, {
-        uid: user.uid,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
+    await setDoc(
+      userRef,
+      buildUserProfilePayload({
+        user,
         nickname: initialNickname,
-        email: user.email,
-        createdAt: new Date(),
-        });
-        console.log("새 프로필 생성 완료:", user.displayName);
-    } else {
-        console.log("기존 유저 로그인:", userSnap.data().nickname);
+      }),
+    );
+    return;
+  }
+
+  const existingData = userSnap.data();
+  const nicknameToKeep = isNicknameLengthValid(normalizeNickname(existingData.nickname))
+    ? normalizeNickname(existingData.nickname)
+    : await createUniqueNickname(existingData.nickname || user.displayName, user.uid);
+
+  await setDoc(
+    userRef,
+    buildUserProfilePayload({
+      user,
+      nickname: nicknameToKeep,
+      existingData,
+    }),
+  );
+};
+
+export const getUserNickname = async (uid) => {
+  const userRef = doc(db, "users", uid);
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    return userSnap.data().nickname;
+  }
+
+  return null;
+};
+
+export const updateUserNickname = async (uid, newNickname) => {
+  const normalizedNickname = normalizeNickname(newNickname);
+
+  if (!normalizedNickname || normalizedNickname.length < 2 || normalizedNickname.length > 12) {
+    throw new Error("Nickname must be between 2 and 12 characters.");
+  }
+
+  const usersRef = collection(db, "users");
+  const nicknameQuery = query(usersRef, where("nickname", "==", normalizedNickname));
+  const querySnapshot = await getDocs(nicknameQuery);
+
+  if (!querySnapshot.empty) {
+    const isMine = querySnapshot.docs.some((snapshotDoc) => snapshotDoc.id === uid);
+    if (!isMine) {
+      throw new Error("That nickname is already in use.");
     }
-    };
+  }
 
-    export const getUserNickname = async (uid) => {
-    const userRef = doc(db, "users", uid);
-    const userSnap = await getDoc(userRef);
-    if (userSnap.exists()) {
-        return userSnap.data().nickname;
-    }
-    return null;
-    };
+  const userRef = doc(db, "users", uid);
+  await updateDoc(userRef, {
+    nickname: normalizedNickname,
+  });
 
-    export const updateUserNickname = async (uid, newNickname) => {
-    const normalizedNickname = normalizeNickname(newNickname);
+  const todayScoreRef = doc(db, "scores", `${uid}_${getTodayDateString()}`);
+  const todayScoreSnap = await getDoc(todayScoreRef);
 
-    if (!normalizedNickname || normalizedNickname.length < 2 || normalizedNickname.length > 12) {
-        throw new Error("별명은 2~12자 사이여야 합니다.");
-    }
-
-    // 닉네임 변경 시 중복 검사
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("nickname", "==", normalizedNickname));
-    const querySnapshot = await getDocs(q);
-    
-    if (!querySnapshot.empty) {
-        // 겹치는 닉네임이 있는데, 그게 자기 자신이면 변경 진행(통과)
-        const isMine = querySnapshot.docs.some(doc => doc.id === uid);
-        if (!isMine) {
-        throw new Error("이미 다른 유저가 사용 중인 별명입니다.");
-        }
-    }
-
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, {
-        nickname: normalizedNickname,
+  if (todayScoreSnap.exists()) {
+    await updateDoc(todayScoreRef, {
+      nickname: normalizedNickname,
     });
-    };
+  }
+};

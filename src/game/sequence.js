@@ -5,33 +5,38 @@ const ALL_COLORS = ["#FF4D4D", "#FFC93C", "#6BCB77", "#4D96FF", "#A020F0", "#FF9
 
 export const getSymbolCount = (nBack) => Math.min(nBack + 3, ALL_SHAPES.length);
 
+const shuffle = (items) => {
+  const nextItems = [...items];
+
+  for (let index = nextItems.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [nextItems[index], nextItems[randomIndex]] = [nextItems[randomIndex], nextItems[index]];
+  }
+
+  return nextItems;
+};
+
+const createsTripleMatch = (index, matchIndices) =>
+  (matchIndices.has(index - 1) && matchIndices.has(index - 2)) ||
+  (matchIndices.has(index - 1) && matchIndices.has(index + 1)) ||
+  (matchIndices.has(index + 1) && matchIndices.has(index + 2));
+
 export const generateSequence = ({ totalSteps, nBack, symbolCount = getSymbolCount(nBack) }) => {
   const sequence = [];
   const targetMatchCount = Math.floor((totalSteps - nBack) * 0.3);
   const matchIndices = new Set();
+  const candidateIndices = shuffle(Array.from({ length: totalSteps - nBack }, (_, index) => index + nBack));
 
-  let consecutiveMatches = 0;
-  for (let i = 0; i < targetMatchCount; i += 1) {
-    let attempts = 0;
-
-    while (attempts < 100) {
-      const randomIndex = Math.floor(Math.random() * (totalSteps - nBack)) + nBack;
-
-      if (!matchIndices.has(randomIndex)) {
-        const isPreviousMatch = matchIndices.has(randomIndex - 1);
-
-        if (isPreviousMatch && consecutiveMatches >= 2) {
-          attempts += 1;
-          continue;
-        }
-
-        matchIndices.add(randomIndex);
-        consecutiveMatches = isPreviousMatch ? consecutiveMatches + 1 : 1;
-        break;
-      }
-
-      attempts += 1;
+  for (const candidateIndex of candidateIndices) {
+    if (matchIndices.size >= targetMatchCount) {
+      break;
     }
+
+    if (createsTripleMatch(candidateIndex, matchIndices)) {
+      continue;
+    }
+
+    matchIndices.add(candidateIndex);
   }
 
   const activeSymbols = Array.from({ length: symbolCount }, (_, index) => ({

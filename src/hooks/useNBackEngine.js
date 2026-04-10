@@ -43,14 +43,6 @@ export const useNBackEngine = (config) => {
   // 다음 턴으로 넘기기 전에 miss 판정과 현재 블록 갱신을 처리한다.
   const nextStep = useCallback(
         (stepIndex) => {
-        if (stepIndex >= totalSteps) {
-            setGameState("FINISHED");
-            if (timerRef.current) {
-            clearInterval(timerRef.current);
-            }
-            return;
-        }
-
         if (
             didMissMatch({
             stepIndex,
@@ -65,6 +57,15 @@ export const useNBackEngine = (config) => {
                 baseScore,
             }),
             );
+        }
+
+        if (stepIndex >= totalSteps) {
+            setGameState("FINISHED");
+            setCurrentBlock(null);
+            if (timerRef.current) {
+            clearInterval(timerRef.current);
+            }
+            return;
         }
 
         engineRef.current.hasAnsweredThisStep = false;

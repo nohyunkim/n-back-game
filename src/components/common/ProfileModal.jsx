@@ -36,7 +36,7 @@ export default function ProfileModal({ onClose }) {
     }
   };
 
-  if (!currentUser) {
+  if (!currentUser || isGuest) {
     return null;
   }
 
@@ -55,9 +55,7 @@ export default function ProfileModal({ onClose }) {
           />
           <div className={styles.nameInfo}>
             <span className={styles.nicknameDisplay}>{nickname}</span>
-            <span className={styles.googleNameDisplay}>
-              {isGuest ? "@guest" : `@${currentUser.displayName ?? "google-user"}`}
-            </span>
+            <span className={styles.googleNameDisplay}>@{currentUser.displayName ?? "google-user"}</span>
           </div>
         </div>
 
@@ -80,7 +78,7 @@ export default function ProfileModal({ onClose }) {
 
         <div className={styles.logoutArea}>
           <button className={styles.logoutButton} onClick={logout}>
-            {isGuest ? "게스트 세션 새로고침" : "로그아웃"}
+            로그아웃
           </button>
         </div>
       </div>

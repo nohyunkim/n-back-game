@@ -65,7 +65,10 @@ export default function Home() {
       <div className={styles.authBar}>
         <div className={styles.authActions}>
           {currentUser && (
-            <div onClick={() => setIsProfileModalOpen(true)} className={styles.profileBadge}>
+            <div
+              onClick={isGuest ? undefined : () => setIsProfileModalOpen(true)}
+              className={`${styles.profileBadge} ${isGuest ? styles.profileBadgeStatic : ""}`}
+            >
               <img src={currentUser.photoURL || DEFAULT_PROFILE_IMAGE} alt="프로필" />
               <span>{nickname}</span>
             </div>
@@ -191,7 +194,7 @@ export default function Home() {
         </div>
       </div>
 
-      {isProfileModalOpen && <ProfileModal onClose={() => setIsProfileModalOpen(false)} />}
+      {!isGuest && isProfileModalOpen && <ProfileModal onClose={() => setIsProfileModalOpen(false)} />}
       <SiteFooter />
     </div>
   );

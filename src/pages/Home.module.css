@@ -85,6 +85,7 @@
     letter-spacing: -0.01em;
   }
   .profileBadge { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 30px; }
+  .profileBadgeStatic { cursor: default; }
   .profileBadge img { width: 28px; height: 28px; border-radius: 50%; }
 
   /* align-items를 stretch로 변경하여 좌우 카드의 높이가 동일하게 맞도록 조정 */

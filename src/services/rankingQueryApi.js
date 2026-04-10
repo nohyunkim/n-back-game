@@ -1,4 +1,4 @@
-import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { getSeoulDateString } from "../utils/date";
 import { db } from "./firebase";
 
@@ -19,6 +19,11 @@ const dedupeRankingByUser = (rankingList) => {
 };
 
 export const getDailyRanking = async () => {
+  const rankingList = await getDailyRankingList();
+  return rankingList.slice(0, 10);
+};
+
+export const getDailyRankingList = async () => {
   try {
     const todayString = getSeoulDateString();
     const scoresRef = collection(db, "scores");
@@ -26,7 +31,6 @@ export const getDailyRanking = async () => {
       scoresRef,
       where("dateString", "==", todayString),
       orderBy("score", "desc"),
-      limit(10),
     );
     const querySnapshot = await getDocs(rankingQuery);
 
@@ -41,6 +45,11 @@ export const getDailyRanking = async () => {
 };
 
 export const getAllTimeRanking = async () => {
+  const rankingList = await getAllTimeRankingList();
+  return rankingList.slice(0, 10);
+};
+
+export const getAllTimeRankingList = async () => {
   try {
     const scoresRef = collection(db, "scores");
     const rankingQuery = query(scoresRef, orderBy("score", "desc"));
@@ -51,7 +60,7 @@ export const getAllTimeRanking = async () => {
       ...scoreDoc.data(),
     }));
 
-    return dedupeRankingByUser(rankingList).slice(0, 10);
+    return dedupeRankingByUser(rankingList);
   } catch (error) {
     console.error("Failed to fetch all-time ranking.", error);
     return [];

@@ -1,2 +1,2 @@
 export { saveScore } from "./scoreApi";
-export { getAllTimeRanking, getDailyRanking } from "./rankingQueryApi";
+export { getAllTimeRanking, getAllTimeRankingList, getDailyRanking, getDailyRankingList } from "./rankingQueryApi";

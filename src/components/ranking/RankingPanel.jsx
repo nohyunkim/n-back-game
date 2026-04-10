@@ -7,7 +7,7 @@ const getRankBadge = (index) => {
   return `${(index + 1).toString().padStart(2, "0")}`;
 };
 
-export default function RankingPanel({ activeTab, ranking, styles }) {
+export default function RankingPanel({ activeTab, ranking, startIndex = 0, styles }) {
   const emptyText =
     activeTab === "daily" ? "오늘 등록된 기록이 없습니다." : "아직 전체 랭킹 기록이 없습니다.";
 
@@ -16,7 +16,7 @@ export default function RankingPanel({ activeTab, ranking, styles }) {
       <div className={styles.panelHeader}>
         <div>
           <p className={styles.panelLabel}>{activeTab === "daily" ? "TODAY" : "ALL TIME"}</p>
-          <h2 className={styles.panelTitle}>{activeTab === "daily" ? "오늘 랭킹 TOP 10" : "전체 TOP 10"}</h2>
+          <h2 className={styles.panelTitle}>{activeTab === "daily" ? "오늘 랭킹 TOP" : "전체 TOP"}</h2>
         </div>
       </div>
 
@@ -24,7 +24,7 @@ export default function RankingPanel({ activeTab, ranking, styles }) {
         {ranking.length > 0 ? (
           ranking.map((item, index) => (
             <div key={item.id} className={styles.rankingItem}>
-              <span className={styles.rankNumber}>{getRankBadge(index)}</span>
+              <span className={styles.rankNumber}>{getRankBadge(startIndex + index)}</span>
               <img src={item.photoURL || DEFAULT_PROFILE_IMAGE} alt="프로필" className={styles.profileImage} />
               <div className={styles.userMeta}>
                 <span className={styles.nickname}>{item.nickname}</span>

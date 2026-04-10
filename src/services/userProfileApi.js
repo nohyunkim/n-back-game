@@ -35,6 +35,8 @@ const buildUserProfilePayload = ({ user, nickname, existingData }) => ({
   bestUpdatedAt: sanitizeBestUpdatedAt(existingData?.bestUpdatedAt),
 });
 
+const getGuestNicknameBase = (uid) => `Guest-${uid.slice(0, 4).toUpperCase()}`;
+
 const createUniqueNickname = async (preferredNickname, uid) => {
   const trimmedBase = trimNicknameBase(preferredNickname);
   const normalizedBase = isNicknameLengthValid(trimmedBase) ? trimmedBase : FALLBACK_NICKNAME;
@@ -67,7 +69,10 @@ export const syncUserProfile = async (user) => {
   const userSnap = await getDoc(userRef);
 
   if (!userSnap.exists()) {
-    const initialNickname = await createUniqueNickname(user.displayName, user.uid);
+    const initialNickname = await createUniqueNickname(
+      user.isAnonymous ? getGuestNicknameBase(user.uid) : user.displayName,
+      user.uid,
+    );
 
     await setDoc(
       userRef,
@@ -82,7 +87,10 @@ export const syncUserProfile = async (user) => {
   const existingData = userSnap.data();
   const nicknameToKeep = isNicknameLengthValid(normalizeNickname(existingData.nickname))
     ? normalizeNickname(existingData.nickname)
-    : await createUniqueNickname(existingData.nickname || user.displayName, user.uid);
+    : await createUniqueNickname(
+        existingData.nickname || (user.isAnonymous ? getGuestNicknameBase(user.uid) : user.displayName),
+        user.uid,
+      );
 
   await setDoc(
     userRef,

@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import ProfileModal from "../components/common/ProfileModal";
 import SiteFooter from "../components/common/SiteFooter";
 import { DEFAULT_GAME_CONFIG, GAME_LIMITS, createGameConfig } from "../constants/gameConfig";
+import { DEFAULT_PROFILE_IMAGE } from "../constants/profile";
 import { useAuth } from "../contexts/useAuth";
 import { getAllTimeRanking } from "../services/rankingApi";
 import styles from "./Home.module.css";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { currentUser, nickname, loginWithGoogle } = useAuth();
+  const { currentUser, isGuest, nickname, loginWithGoogle } = useAuth();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isHowToFlipped, setIsHowToFlipped] = useState(false);
   const [topRanking, setTopRanking] = useState([]);
@@ -19,7 +20,6 @@ export default function Home() {
   const [totalSteps, setTotalSteps] = useState(DEFAULT_GAME_CONFIG.totalSteps);
   const [speed, setSpeed] = useState(DEFAULT_GAME_CONFIG.speed);
 
-  // 홈에서는 전체 랭킹 상위 3개를 미리 보여준다.
   useEffect(() => {
     getAllTimeRanking().then((data) => setTopRanking(data.slice(0, 3)));
   }, []);
@@ -32,13 +32,14 @@ export default function Home() {
       return;
     }
 
-    setLoginNotice("로그인이 완료되지 않았습니다. 카카오톡 같은 인앱 브라우저에서는 Google 팝업이 막힐 수 있으니, 필요하면 기본 브라우저에서 다시 열어주세요.");
+    setLoginNotice(
+      "Google 로그인에 실패했습니다. 인앱 브라우저에서는 팝업이 막힐 수 있으니 기본 브라우저에서 다시 시도해 주세요.",
+    );
   };
 
   const handleStart = () => {
-    // 선택한 옵션을 라우터 state로 넘겨 게임을 시작한다.
     if (!currentUser) {
-      alert("게임을 시작하려면 로그인이 필요합니다.");
+      alert("게스트 세션을 준비 중입니다. 잠시 후 다시 시도해 주세요.");
       return;
     }
 
@@ -49,7 +50,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      {loginNotice && !currentUser && (
+      {loginNotice && (!currentUser || isGuest) && (
         <div className={styles.inAppNotice} role="status">
           <div>
             <strong>로그인 안내</strong>
@@ -62,25 +63,28 @@ export default function Home() {
       )}
 
       <div className={styles.authBar}>
-        {!currentUser ? (
-          <button onClick={handleLogin} className={styles.loginBtn}>
-            <span className={styles.googleIcon} aria-hidden="true">
-              G
-            </span>
-            <span className={styles.loginText}>Google 계정으로 가입</span>
-          </button>
-        ) : (
-          <div onClick={() => setIsProfileModalOpen(true)} className={styles.profileBadge}>
-            <img src={currentUser.photoURL} alt="P" />
-            <span>{nickname}</span>
-          </div>
-        )}
+        <div className={styles.authActions}>
+          {currentUser && (
+            <div onClick={() => setIsProfileModalOpen(true)} className={styles.profileBadge}>
+              <img src={currentUser.photoURL || DEFAULT_PROFILE_IMAGE} alt="프로필" />
+              <span>{nickname}</span>
+            </div>
+          )}
+          {(!currentUser || isGuest) && (
+            <button onClick={handleLogin} className={styles.loginBtn}>
+              <span className={styles.googleIcon} aria-hidden="true">
+                G
+              </span>
+              <span className={styles.loginText}>{isGuest ? "Google 로그인 연결" : "Google 계정으로 계속"}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       <div className={styles.content}>
         <div className={styles.card}>
           <h1 className={styles.title}>N-BACK CHALLENGE</h1>
-          <p className={styles.subtitle}>집중력과 작업 기억을 훈련해보세요.</p>
+          <p className={styles.subtitle}>게스트로 바로 시작하고, 원하면 나중에 Google 계정으로 연결할 수 있습니다.</p>
 
           <div className={styles.settings}>
             <div className={styles.settingItem}>
@@ -99,7 +103,7 @@ export default function Home() {
 
             <div className={styles.settingItem}>
               <label>
-                문제 수: <span>{totalSteps}</span>
+                문제 수 <span>{totalSteps}</span>
               </label>
               <input
                 type="range"
@@ -113,7 +117,7 @@ export default function Home() {
 
             <div className={styles.settingItem}>
               <label>
-                표시 속도: <span>{speed.toFixed(1)}초</span>
+                제시 속도: <span>{speed.toFixed(1)}초</span>
               </label>
               <input
                 type="range"
@@ -141,9 +145,9 @@ export default function Home() {
                     지금 보이는 도형이 <strong>{nBack}칸 전</strong> 도형과 같으면 <strong>Space</strong>를 누르세요.
                   </p>
                   <p>
-                    처음 <strong>{nBack}턴</strong>은 비교 대상이 없으니 순서를 기억하는 데 집중하면 됩니다.
+                    처음 <strong>{nBack}번</strong>은 비교 대상이 없으니 먼저 순서를 기억하는 데 집중하면 됩니다.
                   </p>
-                  <p>패턴을 차분히 보고 정확하게 맞혀서 콤보를 쌓아보세요.</p>
+                  <p>속도보다 정확도를 먼저 맞추면 콤보를 더 안정적으로 이어갈 수 있습니다.</p>
                 </div>
                 <button type="button" className={styles.flipButton} onClick={() => setIsHowToFlipped(true)}>
                   예시 보기
@@ -153,9 +157,9 @@ export default function Home() {
               <div className={`${styles.howToFace} ${styles.howToBack}`}>
                 <div className={styles.howToContent}>
                   <h3>{nBack}-Back 예시</h3>
-                  <p className={styles.exampleLine}>예시 순서: ● → ▲ → ● → ■</p>
-                  <p>2-Back 기준에서는 3번째 ●가 2칸 전의 ●와 같으므로 그 순간 누르면 됩니다.</p>
-                  <p>지금 선택한 {nBack}-Back은 항상 {nBack}칸 전 도형과 비교한다고 생각하면 돼요.</p>
+                  <p className={styles.exampleLine}>예시 순서: ● ▲ ●</p>
+                  <p>2-Back 기준에서는 세 번째 도형이 두 칸 전 도형과 같으므로 그 순간 입력하면 됩니다.</p>
+                  <p>현재 설정은 {nBack}-Back이므로 항상 {nBack}칸 전 도형과 비교한다고 생각하면 됩니다.</p>
                 </div>
                 <button type="button" className={styles.flipButton} onClick={() => setIsHowToFlipped(false)}>
                   규칙 다시 보기

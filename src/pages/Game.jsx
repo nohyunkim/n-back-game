@@ -52,10 +52,14 @@ export default function Game() {
             nickname: nickname || "Anonymous",
             photoURL: currentUser.photoURL || null,
         },
-        score,
-        nBack,
+        {
+            score,
+            nBack,
+            totalSteps,
+            blockDuration,
+        },
         );
-    }, [currentUser, gameState, nBack, nickname, score]);
+    }, [blockDuration, currentUser, gameState, nBack, nickname, score, totalSteps]);
 
   useEffect(() => {
     // Space 입력을 버튼 클릭과 같은 행동으로 연결한다.

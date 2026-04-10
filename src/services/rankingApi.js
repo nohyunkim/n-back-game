@@ -1,4 +1,16 @@
-import { collection, doc, getDoc, getDocs, orderBy, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "./firebase";
 
 const getTodayDateString = () => {
@@ -21,18 +33,24 @@ const normalizeNickname = (nickname) => {
   return trimmed || "Anonymous";
 };
 
-const buildScorePayload = ({ userData, score, nBack, todayString }) => ({
+const buildScorePayload = ({ userData, score, nBack, totalSteps, blockDuration, todayString }) => ({
   uid: userData.uid,
   nickname: normalizeNickname(userData.nickname),
   photoURL: userData.photoURL || null,
   score,
   nBack,
+  totalSteps,
+  blockDuration,
   dateString: todayString,
   timestamp: Timestamp.now(),
 });
 
-const isSavableScore = (score, nBack, userData) =>
-  Boolean(userData?.uid) && Number.isInteger(score) && Number.isInteger(nBack);
+const isSavableScore = ({ score, nBack, totalSteps, blockDuration, userData }) =>
+  Boolean(userData?.uid) &&
+  Number.isInteger(score) &&
+  Number.isInteger(nBack) &&
+  Number.isInteger(totalSteps) &&
+  Number.isInteger(blockDuration);
 
 const dedupeRankingByUser = (rankingList) => {
   const uniqueRankingList = [];
@@ -50,9 +68,47 @@ const dedupeRankingByUser = (rankingList) => {
   return uniqueRankingList;
 };
 
-export const saveScore = async (userData, score, nBack) => {
-  if (!isSavableScore(score, nBack, userData)) {
-    console.error("Invalid score payload.", { userData, score, nBack });
+const upsertUserBestScore = async ({ userData, score, nBack }) => {
+  const userRef = doc(db, "users", userData.uid);
+  const userSnap = await getDoc(userRef);
+  const normalizedNickname = normalizeNickname(userData.nickname);
+  const nextPhotoURL = userData.photoURL || null;
+
+  if (!userSnap.exists()) {
+    const now = Timestamp.now();
+    await setDoc(userRef, {
+      uid: userData.uid,
+      nickname: normalizedNickname,
+      photoURL: nextPhotoURL,
+      createdAt: now,
+      bestScore: score > 0 ? score : 0,
+      bestNBack: score > 0 ? nBack : null,
+      bestUpdatedAt: score > 0 ? now : null,
+    });
+    return;
+  }
+
+  const existingData = userSnap.data();
+  const currentBestScore = Number.isInteger(existingData.bestScore) ? existingData.bestScore : 0;
+  const nextUpdate = {
+    nickname: normalizedNickname,
+    photoURL: nextPhotoURL,
+  };
+
+  if (score > currentBestScore) {
+    nextUpdate.bestScore = score;
+    nextUpdate.bestNBack = nBack;
+    nextUpdate.bestUpdatedAt = Timestamp.now();
+  }
+
+  await updateDoc(userRef, nextUpdate);
+};
+
+export const saveScore = async (userData, scoreData) => {
+  const { score, nBack, totalSteps, blockDuration } = scoreData;
+
+  if (!isSavableScore({ score, nBack, totalSteps, blockDuration, userData })) {
+    console.error("Invalid score payload.", { userData, scoreData });
     return false;
   }
 
@@ -65,16 +121,18 @@ export const saveScore = async (userData, score, nBack) => {
     if (scoreDocSnap.exists()) {
       const existingScore = scoreDocSnap.data().score;
 
-      // 같은 날에는 기존 최고 점수보다 높을 때만 갱신한다.
       if (score <= existingScore) {
+        await upsertUserBestScore({ userData, score, nBack });
         return false;
       }
 
-      await updateDoc(scoreDocRef, buildScorePayload({ userData, score, nBack, todayString }));
+      await updateDoc(scoreDocRef, buildScorePayload({ userData, score, nBack, totalSteps, blockDuration, todayString }));
+      await upsertUserBestScore({ userData, score, nBack });
       return true;
     }
 
-    await setDoc(scoreDocRef, buildScorePayload({ userData, score, nBack, todayString }));
+    await setDoc(scoreDocRef, buildScorePayload({ userData, score, nBack, totalSteps, blockDuration, todayString }));
+    await upsertUserBestScore({ userData, score, nBack });
     return true;
   } catch (error) {
     console.error("Failed to save score.", error);
@@ -86,15 +144,18 @@ export const getDailyRanking = async () => {
   try {
     const todayString = getTodayDateString();
     const scoresRef = collection(db, "scores");
-    const rankingQuery = query(scoresRef, where("dateString", "==", todayString), orderBy("score", "desc"));
+    const rankingQuery = query(
+      scoresRef,
+      where("dateString", "==", todayString),
+      orderBy("score", "desc"),
+      limit(10),
+    );
     const querySnapshot = await getDocs(rankingQuery);
 
-    const rankingList = querySnapshot.docs.map((scoreDoc) => ({
+    return querySnapshot.docs.map((scoreDoc) => ({
       id: scoreDoc.id,
       ...scoreDoc.data(),
     }));
-
-    return dedupeRankingByUser(rankingList).slice(0, 10);
   } catch (error) {
     console.error("Failed to fetch ranking.", error);
     return [];

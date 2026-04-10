@@ -14,9 +14,124 @@ service cloud.firestore {
       return value is string && value.matches('^\\d{4}-\\d{2}-\\d{2}$');
     }
 
+    function isValidNickname(value) {
+      return value is string && value.size() >= 2 && value.size() <= 12;
+    }
+
+    function isValidOptionalString(value) {
+      return value == null || value is string;
+    }
+
+    function isValidNBack(value) {
+      return value is int && value >= 1 && value <= 5;
+    }
+
+    function isValidTotalSteps(value) {
+      return value in [10, 20, 30, 40, 50];
+    }
+
+    function isValidBlockDuration(value) {
+      return value in [1000, 1500, 2000, 2500, 3000, 3500, 4000];
+    }
+
+    function isValidScore(value) {
+      return value is int && value >= -5000 && value <= 5000;
+    }
+
+    function hasOnlyUserFields(data) {
+      return data.keys().hasAll([
+          'uid',
+          'nickname',
+          'photoURL',
+          'createdAt',
+          'bestScore',
+          'bestNBack',
+          'bestUpdatedAt',
+        ]) &&
+        data.keys().hasOnly([
+          'uid',
+          'nickname',
+          'photoURL',
+          'createdAt',
+          'bestScore',
+          'bestNBack',
+          'bestUpdatedAt',
+        ]);
+    }
+
+    function isValidUserDocument(data, userId) {
+      return hasOnlyUserFields(data) &&
+        data.uid == userId &&
+        isValidNickname(data.nickname) &&
+        isValidOptionalString(data.photoURL) &&
+        data.createdAt is timestamp &&
+        data.bestScore is int &&
+        data.bestScore >= 0 &&
+        data.bestScore <= 5000 &&
+        (data.bestNBack == null || isValidNBack(data.bestNBack)) &&
+        (data.bestUpdatedAt == null || data.bestUpdatedAt is timestamp);
+    }
+
+    function hasOnlyScoreFields(data) {
+      return data.keys().hasAll([
+          'uid',
+          'nickname',
+          'photoURL',
+          'score',
+          'nBack',
+          'totalSteps',
+          'blockDuration',
+          'dateString',
+          'timestamp',
+        ]) &&
+        data.keys().hasOnly([
+          'uid',
+          'nickname',
+          'photoURL',
+          'score',
+          'nBack',
+          'totalSteps',
+          'blockDuration',
+          'dateString',
+          'timestamp',
+        ]);
+    }
+
+    function isValidScoreDocument(data) {
+      return hasOnlyScoreFields(data) &&
+        isValidNickname(data.nickname) &&
+        isValidOptionalString(data.photoURL) &&
+        isValidScore(data.score) &&
+        isValidNBack(data.nBack) &&
+        isValidTotalSteps(data.totalSteps) &&
+        isValidBlockDuration(data.blockDuration) &&
+        isValidDateString(data.dateString) &&
+        data.timestamp is timestamp;
+    }
+
     match /users/{userId} {
       allow read: if true;
-      allow create, update: if isOwner(userId) && request.resource.data.uid == request.auth.uid;
+
+      allow create: if
+        isOwner(userId) &&
+        isValidUserDocument(request.resource.data, userId) &&
+        request.resource.data.bestScore == 0 &&
+        request.resource.data.bestNBack == null &&
+        request.resource.data.bestUpdatedAt == null;
+
+      allow update: if
+        isOwner(userId) &&
+        isValidUserDocument(request.resource.data, userId) &&
+        request.resource.data.createdAt == resource.data.createdAt &&
+        request.resource.data.bestScore >= resource.data.bestScore &&
+        (
+          request.resource.data.bestScore == resource.data.bestScore
+            ? request.resource.data.bestNBack == resource.data.bestNBack &&
+              request.resource.data.bestUpdatedAt == resource.data.bestUpdatedAt
+            : isValidNBack(request.resource.data.bestNBack) &&
+              request.resource.data.bestUpdatedAt is timestamp
+        );
+
       allow delete: if false;
     }
 
@@ -25,19 +140,15 @@ service cloud.firestore {
 
       allow create: if
         isOwner(request.resource.data.uid) &&
-        scoreId == request.auth.uid + "_" + request.resource.data.dateString &&
-        isValidDateString(request.resource.data.dateString) &&
-        request.resource.data.score is int &&
-        request.resource.data.nBack is int;
+        isValidScoreDocument(request.resource.data) &&
+        scoreId == request.auth.uid + '_' + request.resource.data.dateString;
 
       allow update: if
         isOwner(resource.data.uid) &&
         request.resource.data.uid == resource.data.uid &&
         request.resource.data.dateString == resource.data.dateString &&
-        scoreId == request.auth.uid + "_" + resource.data.dateString &&
-        isValidDateString(request.resource.data.dateString) &&
-        request.resource.data.score is int &&
-        request.resource.data.nBack is int &&
+        isValidScoreDocument(request.resource.data) &&
+        scoreId == request.auth.uid + '_' + resource.data.dateString &&
         request.resource.data.score >= resource.data.score;
 
       allow delete: if false;

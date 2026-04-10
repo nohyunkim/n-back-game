@@ -49,10 +49,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const resolveRedirectSignIn = async () => {
       try {
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
-          await syncSignedInUser(result.user);
-        }
+        await getRedirectResult(auth);
       } catch (error) {
         console.error("Failed to resolve Google redirect sign-in.", error);
       }
@@ -63,13 +60,18 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
 
-      if (user) {
-        await syncSignedInUser(user);
-      } else {
+      try {
+        if (user) {
+          await syncSignedInUser(user);
+        } else {
+          setNickname(null);
+        }
+      } catch (error) {
+        console.error("Failed to sync signed-in user.", error);
         setNickname(null);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return unsubscribe;

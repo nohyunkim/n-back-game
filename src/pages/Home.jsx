@@ -14,7 +14,6 @@ export default function Home() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isHowToFlipped, setIsHowToFlipped] = useState(false);
   const [topRanking, setTopRanking] = useState([]);
-  const [loginNotice, setLoginNotice] = useState("");
 
   const [nBack, setNBack] = useState(DEFAULT_GAME_CONFIG.nBack);
   const [totalSteps, setTotalSteps] = useState(DEFAULT_GAME_CONFIG.totalSteps);
@@ -25,16 +24,7 @@ export default function Home() {
   }, []);
 
   const handleLogin = async () => {
-    setLoginNotice("");
-
-    const result = await loginWithGoogle();
-    if (result?.ok || result?.redirected) {
-      return;
-    }
-
-    setLoginNotice(
-      "Google 로그인에 실패했습니다. 인앱 브라우저에서는 팝업이 막힐 수 있으니 기본 브라우저에서 다시 시도해 주세요.",
-    );
+    await loginWithGoogle();
   };
 
   const handleStart = () => {
@@ -50,18 +40,6 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      {loginNotice && (!currentUser || isGuest) && (
-        <div className={styles.inAppNotice} role="status">
-          <div>
-            <strong>로그인 안내</strong>
-            <p>{loginNotice}</p>
-          </div>
-          <button type="button" className={styles.noticeClose} onClick={() => setLoginNotice("")}>
-            닫기
-          </button>
-        </div>
-      )}
-
       <div className={styles.authBar}>
         <div className={styles.authActions}>
           {currentUser && (

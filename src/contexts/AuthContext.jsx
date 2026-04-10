@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
-import { getRedirectResult, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
+import { useEffect, useRef, useState } from "react";
+import {
+  getRedirectResult,
+  linkWithPopup,
+  linkWithRedirect,
+  onAuthStateChanged,
+  signInAnonymously,
+  signInWithPopup,
+  signInWithRedirect,
+  signOut,
+} from "firebase/auth";
 import { AuthContext } from "./auth-context";
 import { auth, googleProvider } from "../services/firebase";
 import { getUserNickname, syncUserProfile } from "../services/userProfileApi";
@@ -13,6 +22,7 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [nickname, setNickname] = useState(null);
   const [loading, setLoading] = useState(true);
+  const guestLoginStartedRef = useRef(false);
 
   const syncSignedInUser = async (user) => {
     await syncUserProfile(user);
@@ -21,14 +31,22 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async () => {
+    const activeUser = auth.currentUser;
+
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      const result = activeUser?.isAnonymous
+        ? await linkWithPopup(activeUser, googleProvider)
+        : await signInWithPopup(auth, googleProvider);
       await syncSignedInUser(result.user);
       return { ok: true };
     } catch (error) {
       if (REDIRECT_FALLBACK_ERROR_CODES.has(error?.code)) {
         try {
-          await signInWithRedirect(auth, googleProvider);
+          if (activeUser?.isAnonymous) {
+            await linkWithRedirect(activeUser, googleProvider);
+          } else {
+            await signInWithRedirect(auth, googleProvider);
+          }
           return { ok: false, redirected: true };
         } catch (redirectError) {
           console.error("Failed to sign in with Google redirect.", redirectError);
@@ -58,19 +76,35 @@ export function AuthProvider({ children }) {
     void resolveRedirectSignIn();
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      let shouldFinishLoading = true;
       setCurrentUser(user);
 
       try {
         if (user) {
+          guestLoginStartedRef.current = false;
           await syncSignedInUser(user);
         } else {
           setNickname(null);
+          if (!guestLoginStartedRef.current) {
+            guestLoginStartedRef.current = true;
+            try {
+              shouldFinishLoading = false;
+              await signInAnonymously(auth);
+              return;
+            } catch (guestError) {
+              console.error("Failed to start guest session.", guestError);
+              guestLoginStartedRef.current = false;
+              shouldFinishLoading = true;
+            }
+          }
         }
       } catch (error) {
         console.error("Failed to sync signed-in user.", error);
         setNickname(null);
       } finally {
-        setLoading(false);
+        if (shouldFinishLoading) {
+          setLoading(false);
+        }
       }
     });
 
@@ -81,6 +115,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         currentUser,
+        isGuest: Boolean(currentUser?.isAnonymous),
         nickname,
         setNickname,
         loginWithGoogle,

@@ -44,6 +44,7 @@
   }
 
   .authBar { position: absolute; top: 20px; right: 34px; }
+  .authActions { display: flex; align-items: center; gap: 10px; }
   .loginBtn {
     display: inline-flex;
     align-items: center;
@@ -162,6 +163,12 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 14px;
+  }
+
+  .authActions {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
   }
 
   .loginBtn {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaArrowLeft, FaTrophy } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SiteFooter from "../components/common/SiteFooter";
+import { DEFAULT_PROFILE_IMAGE } from "../constants/profile";
 import { getAllTimeRanking, getDailyRanking } from "../services/rankingApi";
 import styles from "./Ranking.module.css";
 
@@ -32,11 +33,11 @@ export default function Ranking() {
 
   const ranking = activeTab === "daily" ? dailyRanking : allTimeRanking;
   const emptyText =
-    activeTab === "daily" ? "오늘 등록된 기록이 없습니다." : "아직 누적 랭킹 기록이 없습니다.";
+    activeTab === "daily" ? "오늘 등록된 기록이 없습니다." : "아직 전체 랭킹 기록이 없습니다.";
 
   return (
     <div className={styles.container}>
-      <button type="button" className={styles.backIconButton} onClick={() => navigate("/")} aria-label="홈으로 돌아가기">
+      <button type="button" className={styles.backIconButton} onClick={() => navigate("/")} aria-label="뒤로 가기">
         <FaArrowLeft aria-hidden="true" />
       </button>
 
@@ -87,11 +88,11 @@ export default function Ranking() {
               ranking.map((item, index) => (
                 <div key={item.id} className={styles.rankingItem}>
                   <span className={styles.rankNumber}>{getRankBadge(index)}</span>
-                  <img src={item.photoURL} alt="프로필" className={styles.profileImage} />
+                  <img src={item.photoURL || DEFAULT_PROFILE_IMAGE} alt="프로필" className={styles.profileImage} />
                   <div className={styles.userMeta}>
                     <span className={styles.nickname}>{item.nickname}</span>
                     <span className={styles.subMeta}>
-                      {activeTab === "daily" ? "오늘 최고 기록" : `${item.dateString ?? "누적"} 기록`}
+                      {activeTab === "daily" ? "오늘 최고 기록" : `${item.dateString ?? "전체"} 기록`}
                     </span>
                   </div>
                   <span className={styles.score}>{item.score}점</span>

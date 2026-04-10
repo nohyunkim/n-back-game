@@ -1,34 +1,16 @@
-import { useState } from "react";
 import { DEFAULT_PROFILE_IMAGE } from "../../constants/profile";
 import { useAuth } from "../../contexts/useAuth";
-import { updateUserNickname } from "../../services/userProfileApi";
+import { useProfileModalForm } from "../../hooks/useProfileModalForm";
 import styles from "./ProfileModal.module.css";
 
 export default function ProfileModal({ onClose }) {
   const { currentUser, isGuest, nickname, setNickname, logout } = useAuth();
-  const [newNickname, setNewNickname] = useState("");
-  const [error, setError] = useState("");
-
-  const handleChangeNickname = async () => {
-    const normalizedNickname = newNickname.trim();
-
-    try {
-      setError("");
-
-      if (normalizedNickname === nickname) {
-        setError("현재 닉네임과 같습니다.");
-        return;
-      }
-
-      await updateUserNickname(currentUser.uid, normalizedNickname);
-      setNickname(normalizedNickname);
-      setNewNickname("");
-      onClose();
-      alert("닉네임이 변경되었습니다.");
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  const { newNickname, error, setNewNickname, handleChangeNickname } = useProfileModalForm({
+    currentUser,
+    nickname,
+    setNickname,
+    onClose,
+  });
 
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {

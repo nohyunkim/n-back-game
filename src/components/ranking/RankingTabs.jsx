@@ -8,7 +8,7 @@ export default function RankingTabs({ activeTab, onChange, styles }) {
         className={`${styles.tabButton} ${activeTab === "daily" ? styles.tabActive : ""}`}
         onClick={() => onChange("daily")}
       >
-        오늘 랭킹 TOP 10
+        오늘 랭킹 TOP
       </button>
       <button
         type="button"
@@ -17,7 +17,7 @@ export default function RankingTabs({ activeTab, onChange, styles }) {
         className={`${styles.tabButton} ${activeTab === "allTime" ? styles.tabActive : ""}`}
         onClick={() => onChange("allTime")}
       >
-        전체 TOP 10
+        전체 TOP
       </button>
     </div>
   );

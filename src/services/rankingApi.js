@@ -12,17 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "./firebase";
-
-const getTodayDateString = () => {
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-
-  return formatter.format(new Date());
-};
+import { getSeoulDateString } from "../utils/date";
 
 const normalizeNickname = (nickname) => {
   if (typeof nickname !== "string") {
@@ -113,7 +103,7 @@ export const saveScore = async (userData, scoreData) => {
   }
 
   try {
-    const todayString = getTodayDateString();
+    const todayString = getSeoulDateString();
     const scoreDocId = `${userData.uid}_${todayString}`;
     const scoreDocRef = doc(db, "scores", scoreDocId);
     const scoreDocSnap = await getDoc(scoreDocRef);
@@ -142,7 +132,7 @@ export const saveScore = async (userData, scoreData) => {
 
 export const getDailyRanking = async () => {
   try {
-    const todayString = getTodayDateString();
+    const todayString = getSeoulDateString();
     const scoresRef = collection(db, "scores");
     const rankingQuery = query(
       scoresRef,

@@ -1,20 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  getRedirectResult,
-  onAuthStateChanged,
-  signInAnonymously,
-  signInWithPopup,
-  signInWithRedirect,
-  signOut,
-} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { AuthContext } from "./auth-context";
-import { auth, googleProvider } from "../services/firebase";
+import { auth } from "../services/firebase";
+import {
+  loginWithGoogleAccount,
+  logoutCurrentUser,
+  resolveGoogleRedirectSignIn,
+  startGuestSession,
+} from "../services/authApi";
 import { getUserNickname, syncUserProfile } from "../services/userProfileApi";
-
-const REDIRECT_FALLBACK_ERROR_CODES = new Set([
-  "auth/popup-blocked",
-  "auth/cancelled-popup-request",
-]);
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -30,20 +24,15 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      await syncSignedInUser(result.user);
-      return { ok: true };
-    } catch (error) {
-      if (REDIRECT_FALLBACK_ERROR_CODES.has(error?.code)) {
-        try {
-          await signInWithRedirect(auth, googleProvider);
-          return { ok: false, redirected: true };
-        } catch (redirectError) {
-          console.error("Failed to sign in with Google redirect.", redirectError);
-          return { ok: false, error: redirectError };
-        }
+      const result = await loginWithGoogleAccount();
+
+      if (!result?.user) {
+        return { ok: false, redirected: true };
       }
 
+      await syncSignedInUser(result.user);
+      return { ok: true, redirected: false };
+    } catch (error) {
       console.error("Failed to sign in with Google.", error);
       return { ok: false, error };
     }
@@ -51,13 +40,13 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     setNickname(null);
-    return signOut(auth);
+    return logoutCurrentUser();
   };
 
   useEffect(() => {
     const resolveRedirectSignIn = async () => {
       try {
-        await getRedirectResult(auth);
+        await resolveGoogleRedirectSignIn();
       } catch (error) {
         console.error("Failed to resolve Google redirect sign-in.", error);
       }
@@ -79,7 +68,7 @@ export function AuthProvider({ children }) {
             guestLoginStartedRef.current = true;
             try {
               shouldFinishLoading = false;
-              await signInAnonymously(auth);
+              await startGuestSession();
               return;
             } catch (guestError) {
               console.error("Failed to start guest session.", guestError);

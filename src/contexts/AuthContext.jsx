@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
   getRedirectResult,
-  linkWithPopup,
-  linkWithRedirect,
   onAuthStateChanged,
   signInAnonymously,
   signInWithPopup,
@@ -31,22 +29,14 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async () => {
-    const activeUser = auth.currentUser;
-
     try {
-      const result = activeUser?.isAnonymous
-        ? await linkWithPopup(activeUser, googleProvider)
-        : await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
       await syncSignedInUser(result.user);
       return { ok: true };
     } catch (error) {
       if (REDIRECT_FALLBACK_ERROR_CODES.has(error?.code)) {
         try {
-          if (activeUser?.isAnonymous) {
-            await linkWithRedirect(activeUser, googleProvider);
-          } else {
-            await signInWithRedirect(auth, googleProvider);
-          }
+          await signInWithRedirect(auth, googleProvider);
           return { ok: false, redirected: true };
         } catch (redirectError) {
           console.error("Failed to sign in with Google redirect.", redirectError);

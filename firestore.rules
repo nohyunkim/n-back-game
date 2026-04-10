@@ -72,6 +72,26 @@ service cloud.firestore {
         (data.bestUpdatedAt == null || data.bestUpdatedAt is timestamp);
     }
 
+    function hasOnlyNicknameFields(data) {
+      return data.keys().hasAll([
+          'uid',
+          'nickname',
+          'createdAt',
+        ]) &&
+        data.keys().hasOnly([
+          'uid',
+          'nickname',
+          'createdAt',
+        ]);
+    }
+
+    function isValidNicknameReservation(data) {
+      return hasOnlyNicknameFields(data) &&
+        data.uid is string &&
+        isValidNickname(data.nickname) &&
+        data.createdAt is timestamp;
+    }
+
     function hasOnlyScoreFields(data) {
       return data.keys().hasAll([
           'uid',
@@ -133,6 +153,23 @@ service cloud.firestore {
         );
 
       allow delete: if false;
+    }
+
+    match /nicknames/{nicknameKey} {
+      allow read: if true;
+
+      allow create: if
+        isSignedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        isValidNicknameReservation(request.resource.data);
+
+      allow update: if
+        isOwner(resource.data.uid) &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.createdAt == resource.data.createdAt &&
+        isValidNicknameReservation(request.resource.data);
+
+      allow delete: if isOwner(resource.data.uid);
     }
 
     match /scores/{scoreId} {

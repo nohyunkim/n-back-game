@@ -13,7 +13,7 @@ export default function HomeSettingsCard({
   return (
     <div className={styles.card}>
       <h1 className={styles.title}>N-BACK CHALLENGE</h1>
-      <p className={styles.subtitle}>게스트로 바로 시작하고, 원하면 나중에 Google 계정으로 연결할 수 있습니다.</p>
+      <p className={styles.subtitle}>N-Back은 몇 칸 전 도형과 같은지 맞히는 기억력 게임입니다.</p>
 
       <div className={styles.settings}>
         <div className={styles.settingItem}>

@@ -13,7 +13,7 @@ Google 로그인 후 게임을 플레이하고, Firebase Firestore에 점수를 
 - Google 로그인 및 프로필 기반 닉네임 관리
 - 인앱 브라우저 대응 Google 로그인 (`popup` 실패 시 `redirect` fallback)
 - 홈 화면 `전체 Top 3` 미리보기
-- `오늘 랭킹 Top 10` / `전체 Top 10` 탭 제공
+- `오늘 랭킹 Top 10` / `전체 랭킹` 조회
 - 푸터 정책/안내 모달 제공
   - 서비스 소개
   - 지표 해석 가이드
@@ -30,6 +30,7 @@ Google 로그인 후 게임을 플레이하고, Firebase Firestore에 점수를 
 - Firebase Firestore
 - React Icons
 - CSS Modules
+- Node.js test runner
 
 ## 화면 구성
 
@@ -49,8 +50,8 @@ Google 로그인 후 게임을 플레이하고, Firebase Firestore에 점수를 
 
 ### 랭킹
 
-- 오늘 날짜 기준 Top 10 랭킹 표시
-- 누적 최고 기록 기준 전체 Top 10 랭킹 표시
+- 오늘 날짜 기준 랭킹 표시
+- 전체 최고 기록 기준 랭킹 표시
 - 사용자 프로필 이미지와 닉네임 표시
 
 ### 안내 페이지
@@ -73,6 +74,7 @@ npm run dev
 npm run build
 npm run preview
 npm run lint
+npm run test
 ```
 
 ## 환경 변수
@@ -93,11 +95,12 @@ VITE_FIREBASE_APP_ID=
 ### `users`
 
 - `uid`
-- `displayName`
-- `photoURL`
 - `nickname`
-- `email`
+- `photoURL`
 - `createdAt`
+- `bestScore`
+- `bestNBack`
+- `bestUpdatedAt`
 
 ### `scores`
 
@@ -106,24 +109,41 @@ VITE_FIREBASE_APP_ID=
 - `photoURL`
 - `score`
 - `nBack`
+- `totalSteps`
+- `blockDuration`
 - `dateString`
 - `timestamp`
 
 점수는 `uid_YYYY-MM-DD` 형식의 문서 ID로 저장되며, 같은 날에는 더 높은 점수만 갱신됩니다.  
-전체 랭킹은 `scores` 컬렉션 전체에서 사용자별 최고 점수 1개만 반영해 집계합니다.
+전체 랭킹은 `scores` 컬렉션에서 사용자별 최고 점수 1개만 반영해 집계합니다.
+
+## 테스트
+
+현재 아래 게임 로직에 대한 기본 테스트가 포함되어 있습니다.
+
+- `judgement`: early step, match, miss 판정
+- `scoring`: 점수 계산, 콤보 보너스, 패널티 계산
+- `sequence`: 시퀀스 길이, match 생성 규칙, triple match 방지
+
+실행 방법:
+
+```bash
+npm run test
+```
 
 ## 현재 상태
 
 - 홈, 게임, 랭킹, 안내 페이지 흐름이 동작 중
-- 홈 화면과 랭킹 화면 UI 정리 완료
+- 라우트 단위 lazy loading 적용
+- Vite 번들 청크 분리 적용
 - 인앱 브라우저에서 Google 로그인 fallback 적용
 - 푸터 정책/안내 항목은 모달 팝업으로 확인 가능
-- `Esc` 키로 모달 닫기 지원
 - `npm run lint`
+- `npm run test`
 - `npm run build` 확인 완료
 
 ## 다음에 보면 좋은 것
 
-- 실제 배포 화면 기준 모바일 푸터 레이아웃 점검
-- 정책/이용약관 전문 페이지를 별도로 둘지 결정
+- 실제 배포 화면 기준 모바일 레이아웃 점검
 - README에 스크린샷 또는 배포 주소 추가
+- 점수 저장/조회 실패 처리 정책 결정

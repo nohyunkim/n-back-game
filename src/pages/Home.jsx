@@ -43,6 +43,10 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.homeBrand}>
+        <img className={styles.homeLogo} src="/favicon.svg" alt="N-Back Challenge logo" />
+      </div>
+
       <HomeAuthPanel
         currentUser={currentUser}
         isGuest={isGuest}

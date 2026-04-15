@@ -171,6 +171,17 @@
   word-break: keep-all;
 }
 
+.accordionPanel p + p {
+  margin-top: 8px;
+}
+
+.inlineLink {
+  color: #c4b5fd;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 @media (max-width: 640px) {
   .footer {
     width: calc(100% - 32px);
